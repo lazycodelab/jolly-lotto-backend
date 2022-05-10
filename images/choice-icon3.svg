@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="100" viewBox="0 0 96 100">
+  <g id="Group_6737" data-name="Group 6737" transform="translate(-827 -1044)">
+    <path id="Path_26550" data-name="Path 26550" d="M1.5,42.054V88.5a6,6,0,0,0,6,6h81a6,6,0,0,0,6-6V42.054l-.061-12.139L85.5,24.257,63.778,10.5,51.055,2.448a5.8,5.8,0,0,0-6.356,0L32.054,10.5,10.5,24.224,1.561,29.916Z" transform="translate(827 1048)" fill="rgba(101,101,101,0.15)" stroke="#656565" stroke-linejoin="round" stroke-width="3"/>
+    <rect id="Rectangle_4493" data-name="Rectangle 4493" width="45" height="85" transform="translate(855.5 1045.5)" fill="#fff" stroke="#656565" stroke-width="3"/>
+    <rect id="Rectangle_4492" data-name="Rectangle 4492" width="45" height="85" transform="translate(850.5 1050.5)" fill="#fff" stroke="#656565" stroke-width="3"/>
+    <rect id="Rectangle_4488" data-name="Rectangle 4488" width="45" height="85" transform="translate(845.5 1055.5)" fill="#fff" stroke="#656565" stroke-width="3"/>
+    <g id="Group_6736" data-name="Group 6736" transform="translate(-0.209 -0.854)">
+      <path id="Path_26552" data-name="Path 26552" d="M26.709,79.622V20.25a4.824,4.824,0,0,0,4.833-4.814H50.876a4.824,4.824,0,0,0,4.833,4.814V79.622a4.824,4.824,0,0,0-4.833,4.814H31.542A4.824,4.824,0,0,0,26.709,79.622Z" transform="translate(827 1048.918)" fill="rgba(255,163,25,0.15)" stroke="#ffa319" stroke-width="3"/>
+      <line id="Line_1087" data-name="Line 1087" y2="4.822" transform="translate(868.21 1078.794)" fill="none" stroke="#656565" stroke-width="3"/>
+      <line id="Line_1088" data-name="Line 1088" y2="4.822" transform="translate(868.21 1112.095)" fill="none" stroke="#656565" stroke-width="3"/>
+      <path id="Path_26554" data-name="Path 26554" d="M41.218,41.159c4.454,0,9.676,3.962,9.674,8.843s-5.227,8.836-9.681,8.832-9.676-3.962-9.674-8.843S36.764,41.156,41.218,41.159Z" transform="translate(827 1048.86)" fill="#fff" stroke="#656565" stroke-width="3"/>
+    </g>
+    <path id="Path_26556" data-name="Path 26556" d="M1.5,41.872V87.923a5.974,5.974,0,0,0,6,5.949h81a5.974,5.974,0,0,0,6-5.949V41.872l-.061,0L51.055,69.111a5.833,5.833,0,0,1-6.356,0L1.561,41.877Z" transform="translate(827 1048.628)" fill="#fff" stroke="#656565" stroke-linejoin="round" stroke-width="3"/>
+    <rect id="Rectangle_4490" data-name="Rectangle 4490" width="95.582" height="95.582" transform="translate(827 1046.918)" fill="none"/>
+    <rect id="Rectangle_4491" data-name="Rectangle 4491" width="95.582" height="95.582" transform="translate(827 1046.918)" fill="none"/>
+  </g>
+</svg>
