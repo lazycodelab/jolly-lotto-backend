@@ -5,9 +5,6 @@ require_once 'api/Products.php';
 $api = new Products;
 $products = $api->getProductsListing();
 
-echo '<pre>';
-print_r($products);
-echo '</pre>';
 ?>
 <section class="baner-section">
 	<div class="auto-container">
@@ -43,7 +40,9 @@ echo '</pre>';
 			<h2>PLAY THE WORLDS BIGGEST LOTTERIES ONLINE AT JOLLYLOTTO.COM</h2>
 		</div>
 			<div class="play-lotery-row" id="play-lotery-row">
-				<?php foreach( $products as $product ): ?>
+				<?php foreach( $products as $product ) :
+					$details = $api->fetchDetails($product['id'], $product['productType']); ?>
+
 					<div class="lottery-slide-col">
 						<div class="lottery-slide-iner bg-yellow">
 							<img src="images/left-curve.png" class="left-curve-image">
@@ -53,8 +52,8 @@ echo '</pre>';
 									<img src="images/Australian6-45.png">
 								</div>
 								<div class="lotter-price">
-									<span class="lotery-tick-name">AUSTRALIAN 6/45</span>
-									<sub>AU$</sub><b>25.00M</b>
+									<span class="lotery-tick-name"><?php echo $product['lotteryName']; ?></span>
+									<sub><?php echo $product['currencyCode']; ?></sub><b><?php echo $product['price']; ?>M</b>
 								</div>
 								<div class="play-now-btn">
 									<a href="">Play Now</a>

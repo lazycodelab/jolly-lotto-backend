@@ -12,50 +12,22 @@ class Products extends BaseAPI {
 		$this->url = $this->api . $this->endpoint;
 	}
 
-	public function getProductsListing() : array
+	public function fetchDetails(string $id, string $type)
 	{
-		$headers = array(
-		'Content-Type: application/json',
-		'Content-Length: 0',
-		sprintf('Authorization: Bearer %s', $this->token)
-		);
-		$ch = curl_init();
-		curl_setopt($ch,CURLOPT_URL, $this->url);
-		curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch,CURLOPT_FAILONERROR,true);
-		$result = curl_exec($ch);
-		if (curl_errno($ch)) {
-			$error_msg = curl_error($ch);
-			echo '==>'.$error_msg;
-		}
-		curl_close($ch);
+		if ( ! $id || ! $type ) return;
 
-		return json_decode($result, TRUE);
+		$type = $type === 'Single Play' ? 'single' : $type;
+		$this->endpoint = "crow/api/products/LE/{$type}/details/{$id}";
+
+		$response = $this->doCurl($this->getURL());
+
+		return json_decode($response);
 	}
 
-	public function fetchProductDetails(): array
+	public function getProductsListing() : array
 	{
-		$this->endpoint = 'crow/api/allproducts/LE/single/details/c807697d-a66a-46b5-929b-08d7069ba76b';
-		$headers = array(
-		'Content-Type: application/json',
-		'Content-Length: 0',
-		sprintf('Authorization: Bearer %s', $this->token)
-		);
-		$ch = curl_init();
-		curl_setopt($ch,CURLOPT_URL, $this->url);
-		curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch,CURLOPT_FAILONERROR,true);
-		$result = curl_exec($ch);
-		if (curl_errno($ch)) {
-			$error_msg = curl_error($ch);
-			echo '==>'.$error_msg;
-		}
-		curl_close($ch);
+		$response = $this->doCurl($this->getUrl());
 
-		return json_decode($result, TRUE);
+		return json_decode($response, TRUE);
 	}
 }
