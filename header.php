@@ -12,6 +12,9 @@
   	<link rel="stylesheet" href="assets/css/jquery-ui.css">
   	<link rel="stylesheet" type="text/css" href="assets/css/slick.css">
   	<link rel="stylesheet" type="text/css" href="assets/css/style.css?v=1.0.0">
+
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery-ui-js.js"></script>
 </head>
 <body>
 <header>

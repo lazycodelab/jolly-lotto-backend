@@ -3,7 +3,8 @@ include 'header.php';
 require_once 'api/Products.php';
 
 $api = new Products;
-$products = $api->getProductsListing();
+//$products = $api->getProductsListing();
+$products = [];
 
 ?>
 <section class="baner-section">
@@ -40,6 +41,27 @@ $products = $api->getProductsListing();
 			<h2>PLAY THE WORLDS BIGGEST LOTTERIES ONLINE AT JOLLYLOTTO.COM</h2>
 		</div>
 			<div class="play-lotery-row" id="play-lotery-row">
+								<div class="lottery-slide-col">
+					<div class="lottery-slide-iner bg-yellow">
+						<img src="images/left-curve.png" class="left-curve-image">
+						<img src="images/right-curve.png" class="right-curve-image">
+						<div class="lottery-slide-box">
+							<div class="lottery-icon">
+								<img src="images/Australian6-45.png">
+							</div>
+							<div class="lotter-price">
+								<span class="lotery-tick-name">AUSTRALIAN 6/45</span>
+								<sub>AU$</sub><b>25.00M</b>
+							</div>
+							<div class="play-now-btn">
+								<a href="oz-lotto.php?id=4aa84571-aad3-4ee6-8933-08d9585e70ee">Play Now</a>
+							</div>
+							<div class="lottery-day">
+								<p>1 DAY 22:58:21</p>
+							</div>
+						</div>
+					</div>
+				</div>
 				<?php foreach( $products as $product ) :
 					$details = $api->fetchDetails($product['id'], $product['productType']); ?>
 
@@ -56,7 +78,7 @@ $products = $api->getProductsListing();
 									<sub><?php echo $product['currencyCode']; ?></sub><b><?php echo $product['price']; ?>M</b>
 								</div>
 								<div class="play-now-btn">
-									<a href="">Play Now</a>
+									<a href="/australian.php">Play Now</a>
 								</div>
 								<div class="lottery-day">
 									<p>1 DAY 22:58:21</p>
@@ -65,174 +87,6 @@ $products = $api->getProductsListing();
 						</div>
 					</div>
 				<?php endforeach; ?>
-				<!--<div class="lottery-slide-col">
-					<div class="lottery-slide-iner bg-yellow">
-						<img src="images/left-curve.png" class="left-curve-image">
-						<img src="images/right-curve.png" class="right-curve-image">
-						<div class="lottery-slide-box">
-							<div class="lottery-icon">
-								<img src="images/Australian6-45.png">
-							</div>
-							<div class="lotter-price">
-								<span class="lotery-tick-name">AUSTRALIAN 6/45</span>
-								<sub>AU$</sub><b>25.00M</b>
-							</div>
-							<div class="play-now-btn">
-								<a href="">Play Now</a>
-							</div>
-							<div class="lottery-day">
-								<p>1 DAY 22:58:21</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="lottery-slide-col">
-					<div class="lottery-slide-iner bg-blue">
-									<img src="images/left-curve.png" class="left-curve-image">
-						<img src="images/right-curve.png" class="right-curve-image">
-					<div class="lottery-slide-box">
-							<div class="lottery-icon">
-								<img src="images/EuroMillions.png">
-							</div>
-							<div class="lotter-price">
-								<span class="lotery-tick-name">EURO MILLIONS</span>
-								<sub>AU$</sub><b>25.00M</b>
-							</div>
-							<div class="play-now-btn">
-								<a href="">Play Now</a>
-							</div>
-							<div class="lottery-day">
-								<p>1 DAY 22:58:21</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="lottery-slide-col">
-					<div class="lottery-slide-iner bg-pink">
-									<img src="images/left-curve.png" class="left-curve-image">
-						<img src="images/right-curve.png" class="right-curve-image">
-						<div class="lottery-slide-box">
-							<div class="lottery-icon">
-								<img src="images/FrenchLotto.png">
-							</div>
-							<div class="lotter-price">
-									<span class="lotery-tick-name">FRENCH LOTTO</span>
-								<sub>AU$</sub><b>25.00M</b>
-							</div>
-							<div class="play-now-btn">
-								<a href="">Play Now</a>
-							</div>
-							<div class="lottery-day">
-								<p>1 DAY 22:58:21</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="lottery-slide-col">
-					<div class="lottery-slide-iner bg-green">
-									<img src="images/left-curve.png" class="left-curve-image">
-						<img src="images/right-curve.png" class="right-curve-image">
-						<div class="lottery-slide-box">
-							<div class="lottery-icon">
-								<img src="images/IrishLotto.png">
-							</div>
-							<div class="lotter-price">
-								<span class="lotery-tick-name">IRISH LOTTO</span>
-								<sub>AU$</sub><b>25.00M</b>
-							</div>
-							<div class="play-now-btn">
-								<a href="">Play Now</a>
-							</div>
-							<div class="lottery-day">
-								<p>1 DAY 22:58:21</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="lottery-slide-col">
-					<div class="lottery-slide-iner bg-orange">
-									<img src="images/left-curve.png" class="left-curve-image">
-						<img src="images/right-curve.png" class="right-curve-image">
-						<div class="lottery-slide-box">
-							<div class="lottery-icon">
-								<img src="images/OZLotto.png">
-							</div>
-							<div class="lotter-price">
-									<span class="lotery-tick-name">OZ LOTTO</span>
-								<sub>AU$</sub><b>25.00M</b>
-							</div>
-							<div class="play-now-btn">
-								<a href="">Play Now</a>
-							</div>
-							<div class="lottery-day">
-								<p>1 DAY 22:58:21</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="lottery-slide-col">
-					<div class="lottery-slide-iner bg-yellow">
-									<img src="images/left-curve.png" class="left-curve-image">
-						<img src="images/right-curve.png" class="right-curve-image">
-						<div class="lottery-slide-box">
-							<div class="lottery-icon">
-								<img src="images/IrishLotto.png">
-							</div>
-							<div class="lotter-price">
-									<span class="lotery-tick-name">IRISH LOTTO</span>
-								<sub>AU$</sub><b>25.00M</b>
-							</div>
-							<div class="play-now-btn">
-								<a href="">Play Now</a>
-							</div>
-							<div class="lottery-day">
-								<p>1 DAY 22:58:21</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="lottery-slide-col">
-					<div class="lottery-slide-iner bg-orange">
-									<img src="images/left-curve.png" class="left-curve-image">
-						<img src="images/right-curve.png" class="right-curve-image">
-						<div class="lottery-slide-box">
-							<div class="lottery-icon">
-								<img src="images/OZLotto.png">
-							</div>
-							<div class="lotter-price">
-									<span class="lotery-tick-name">OZ LOTTO</span>
-								<sub>AU$</sub><b>25.00M</b>
-							</div>
-							<div class="play-now-btn">
-								<a href="">Play Now</a>
-							</div>
-							<div class="lottery-day">
-								<p>1 DAY 22:58:21</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="lottery-slide-col">
-					<div class="lottery-slide-iner bg-yellow">
-									<img src="images/left-curve.png" class="left-curve-image">
-						<img src="images/right-curve.png" class="right-curve-image">
-						<div class="lottery-slide-box">
-							<div class="lottery-icon">
-								<img src="images/IrishLotto.png">
-							</div>
-							<div class="lotter-price">
-									<span class="lotery-tick-name">IRISH LOTTO</span>
-								<sub>AU$</sub><b>25.00M</b>
-							</div>
-							<div class="play-now-btn">
-								<a href="">Play Now</a>
-							</div>
-							<div class="lottery-day">
-								<p>1 DAY 22:58:21</p>
-							</div>
-						</div>
-					</div>
-				</div>-->
 		</div>
 	</div>
 </section>

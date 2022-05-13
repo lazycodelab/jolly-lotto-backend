@@ -78,27 +78,26 @@
 			</div>
 	</div>
 </footer>
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/jquery-ui-js.js"></script>
+
 <script src="assets/js/slick.min.js"></script>
 <script type="text/javascript">
 jQuery(document).ready(function(){
 	jQuery('#home-banner-slider').slick({
 		infinite: true,
-		slidesToShow: 1, 
-		slidesToScroll: 1, 
+		slidesToShow: 1,
+		slidesToScroll: 1,
 		arrows: false,
-		dots: true 
+		dots: true
 	});
 	jQuery('#play-lotery-row').slick({
 		infinite: true,
-		slidesToShow: 5, 
-		slidesToScroll: 1, 
+		slidesToShow: 5,
+		slidesToScroll: 1,
 		arrows: true,
 		dots: false,
 		nextArrow: '<button class="btn-next btn-style-class"><img src="images/arrow-right.svg"></button>',
 		prevArrow: '<button class="btn-previous btn-style-class"><img src="images/arrow-left.svg"></button>',
-    
+
    		responsive: [
 			       	{
 						breakpoint: 1100,
@@ -158,7 +157,7 @@ jQuery(document).ready(function(){
 		// 	jQuery(".set > a i")
 		// 	.removeClass("up-carret")
 		// 	.addClass("down-carret");
-		// } 
+		// }
 		// else {
 		// 	jQuery(".set > a i").removeClass("up-carret").addClass("down-carret");
 		// 	jQuery(this).find("i").removeClass("down-carret").addClass("up-carret");
@@ -171,7 +170,7 @@ jQuery(document).ready(function(){
 
 
 	jQuery('.nav-tabs > li > a').click(function(event) {
-		event.preventDefault(); 
+		event.preventDefault();
 		var active_tab_selector = jQuery('.nav-tabs > li.active > a').attr('href');
 		var actived_nav = jQuery('.nav-tabs > li.active');
 		actived_nav.removeClass('active');

@@ -1,4 +1,15 @@
-<?php include 'header.php' ?>
+<?php include 'header.php';
+require_once 'api/Products.php';
+$api = new Products;
+$id = $_GET['id'];
+$details = $api->fetchDetails($id, 'single');
+
+$lottery = $details->lottery;
+$noOfBalls = $lottery->numOfBalls;
+$maxBallNo = $lottery->maxBallNumber;
+$minBallNo = $lottery->minBallNumber;
+$drawDays = $lottery->drawDays;
+?>
 <section class="single-product-page oz-product-bg">
 	<div class="auto-container">
 		<div class="single-product-row">
@@ -11,7 +22,29 @@
 			</div>
 			<div class="lottery-draw-time col-32">
 				<p>Draw Cutoff Timer</p>
-				<h5>3 Day(s) 05:23:45</h5>
+				<!--<h5>3 Day(s) 05:23:45</h5>-->
+				<h5 id="cutOff"><?php echo $lottery->cutOffs[0]->hours; ?> hours</h5>
+				<?php $hours = $lottery->cutOffs[0]->hours * 60 * 60; ?>
+				<script>
+					function countdownTimeStart(hours){
+						var countDownDate = new Date("<?php echo $hours; ?>").getTime();
+
+						var x = setInterval(function() {
+							var now = new Date().getTime();
+							var distance = countDownDate - now;
+							var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+							var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+							var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+							document.getElementById("cutOff").innerHTML = hours + ":"
+							+ minutes + ":" + seconds;
+						}, 1000);
+					}
+
+					jQuery(function ($) {
+						display = document.querySelector('#cutOff');
+						countdownTimeStart(7);
+					});
+				</script>
 			</div>
 		</div>
 	</div>
@@ -28,8 +61,8 @@
 			<div class="pro-tab-detail tab-content active" id="tab1">
 				<div class="pro-tab-info-iner">
 					<div class="pro-tab-headings">
-						<h3>Play Australian 6/45 Lotto</h3>
-						<p>Save money and get more chances of winning prizes with this exciting lottery system. You get 5 draws at almost half price! Can you pick the jackpot winning numbers in your "Lucky 5"?</p>
+						<h3>Play Oz Lotto</h3>
+						<p><?php echo $details->product->description; ?></p>
 					</div>
 					<div class="lottery-option-row">
 						<p>Quickpick, Edit or Delete lines</p>
@@ -53,177 +86,14 @@
 										</div>
 									</div>
 									<div class="select-no-heading">
-										<p>Select 5 Numbers</p>
+										<p>Select <?php echo $noOfBalls; ?> Numbers</p>
 									</div>
 									<div class="select-ticket-box-row">
-										<div class="select-ticket-box">
-											<span>1</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>2</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>3</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>4</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">5</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>6</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>7</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>8</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>9</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>11</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>12</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>13</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>14</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>15</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>16</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">17</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>18</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>20</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>21</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>22</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>23</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>24</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>25</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">26</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>27</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>28</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>29</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>30</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>31</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>32</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>33</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>34</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>35</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>36</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">37</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>38</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>39</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>40</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>41</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>42</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>43</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>44</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>45</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>46</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>47</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">48</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>49</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>50</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>51</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>52</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>53</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>54</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>55</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>56</span>
-										</div>
+										<?php for ($i = $minBallNo; $i <= $maxBallNo; $i++) : ?>
+											<div class="select-ticket-box">
+												<span><?php echo $i; ?></span>
+											</div>
+										<?php endfor; ?>
 									</div>
 									<div class="select-no-heading">
 										<p>Select 1 Powerball</p>
@@ -275,717 +145,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="lottery-table-col">
-							<div class="lottery-table-col-iner">
-								<div class="lotter-table-head">
-									<div class="table-check-icon">
-										<img src="images/tick-mark.png">
-									</div>
-									<div class="quick-action-row">
-										<div class="acton-btns">
-											<button class="quick-pick">Quick Pick</button>
-											<button class="clear-btn">Clear</button>
-											<button class="trash-icon"><img src="images/IconTrash.svg"></button>
-										</div>
-									</div>
-									<div class="select-no-heading">
-										<p>Select 5 Numbers</p>
-									</div>
-									<div class="select-ticket-box-row">
-										<div class="select-ticket-box">
-											<span>1</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>2</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>3</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>4</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>5</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>6</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>7</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>8</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>9</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>11</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">12</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>13</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>14</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>15</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">16</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>17</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>18</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>20</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>21</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>22</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>23</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>24</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>25</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="selected-quick">26</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>27</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>28</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>29</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>30</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>31</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>32</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>33</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>34</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>35</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>36</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>37</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>38</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>39</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>40</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>41</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">42</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>43</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>44</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>45</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>46</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>47</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">48</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>49</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>50</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>51</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>52</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>53</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>54</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>55</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>56</span>
-										</div>
-									</div>
-									<div class="select-no-heading">
-										<p>Select 1 Powerball</p>
-									</div>
-									<div class="select-ticket-box-row">
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">1</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">2</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">3</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">4</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">5</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">6</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">7</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">8</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">9</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">11</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">12</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">13</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">14</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="lottery-table-col active-ticket-table">
-							<div class="lottery-table-col-iner">
-								<div class="lotter-table-head">
-									<div class="table-check-icon">
-										<img src="images/tick-mark.png">
-									</div>
-									<div class="quick-action-row">
-										<div class="acton-btns">
-											<button class="quick-pick">Quick Pick</button>
-											<button class="clear-btn">Clear</button>
-											<button class="trash-icon"><img src="images/IconTrash.svg"></button>
-										</div>
-									</div>
-									<div class="select-no-heading">
-										<p>Select 5 Numbers</p>
-									</div>
-									<div class="select-ticket-box-row">
-										<div class="select-ticket-box">
-											<span>1</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>2</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>3</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>4</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>5</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>6</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>7</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>8</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>9</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>11</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>12</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>13</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>14</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>15</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>16</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>17</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>18</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>20</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>21</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>22</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>23</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">24</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>25</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>26</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>27</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>28</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>29</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>30</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>31</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>32</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>33</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>34</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>35</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>36</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>37</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>38</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>39</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>40</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>41</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>42</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>43</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>44</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>45</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>46</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>47</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="">48</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>49</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>50</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>51</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>52</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>53</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>54</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>55</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>56</span>
-										</div>
-									</div>
-									<div class="select-no-heading">
-										<p>Select 1 Powerball</p>
-									</div>
-									<div class="select-ticket-box-row">
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">1</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">2</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">3</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">4</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">5</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">6</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">7</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">8</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">9</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">11</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">12</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">13</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">14</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					<div class="lottery-table-col error-ticket">
-							<div class="lottery-table-col-iner">
-								<div class="lotter-table-head">
-									<div class="table-check-icon">
-										<img src="images/tick-mark.png">
-									</div>
-									<div class="notification-error-icon">
-										<span>!</span>
-									</div>
-									<div class="quick-action-row">
-										<div class="acton-btns">
-											<button class="quick-pick">Quick Pick</button>
-											<button class="clear-btn">Clear</button>
-											<button class="trash-icon"><img src="images/IconTrash.svg"></button>
-										</div>
-									</div>
-									<div class="select-no-heading">
-										<p>Select 5 Numbers</p>
-									</div>
-									<div class="select-ticket-box-row">
-										<div class="select-ticket-box">
-											<span>1</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>2</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>3</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>4</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>5</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>6</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>7</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>8</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>9</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>11</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>12</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>13</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>14</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>15</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>16</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>17</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>18</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>20</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>21</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>22</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>23</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>24</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>25</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>26</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>27</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>28</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>29</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>30</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>31</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>32</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>33</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>34</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>35</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>36</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>37</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>38</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>39</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>40</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>41</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>42</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>43</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>44</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>45</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>46</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>47</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>48</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>49</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>50</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>51</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>52</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>53</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>54</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>55</span>
-										</div>
-										<div class="select-ticket-box">
-											<span>56</span>
-										</div>
-									</div>
-									<div class="select-no-heading">
-										<p>Select 1 Powerball</p>
-									</div>
-									<div class="select-ticket-box-row">
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">1</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">2</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">3</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">4</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">5</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">6</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">7</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">8</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">9</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">10</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">11</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">12</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">13</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">14</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+
 						<div class="lottery-table-col">
 							<div class="lottery-table-col-iner">
 								<div class="add-line-icon-row">
@@ -1000,13 +160,13 @@
 				</div>
 				<div class="lottery-ticket-detail-section">
 					<div class="ticket-discription-col">
-						<div class="subscription-info">
+						<!--<div class="subscription-info">
 							<p>Subscription <span>!</span></p>
 							<div class="sub-switch">
 								<input type="checkbox" id="sub-switch" checked>
 								<label for="sub-switch"><span></span></label>
 							</div>
-						</div>
+						</div>-->
 						<div class="lottery-duration-row">
 							<h4>Duration</h4>
 							  <div class="duration-quantity">
@@ -1021,18 +181,20 @@
 						<div class="select-you-lottery-draw">
 							<h4>Select your Draw Days</h4>
 							<ul>
+								<?php for ($i = 0; $i < count($drawDays); $i++) :
+									$day = $drawDays[$i];
+									$earlier = new DateTime("Tuesday");
+									$later = new DateTime("now");
+
+									$abs_diff = $later->diff($earlier)->format("%a");
+
+									$dateHuman = $earlier->format("M d");
+									?>
 								 <li>
 								    <input class="styled-checkbox" id="day-slot-1" type="checkbox" value="value1">
-								    <label for="day-slot-1"><span>Mon</span>  <span>Aug 16</span> <span class="time-slot"><img src="images/clock.svg"> 3:12:34</span></label>
+								    <label for="day-slot-1"><span><?php echo $day->drawDay; ?></span>  <span><?php echo $dateHuman; ?></span> <span class="time-slot"><img src="images/clock.svg"> <?php echo $abs_diff; ?> days</span></label>
 								  </li>
-								  <li>
-								    <input class="styled-checkbox" id="day-slot-2" type="checkbox" value="value1">
-								    <label for="day-slot-2"><span>Wed</span>  <span>Aug 16</span> <span class="time-slot"><img src="images/clock.svg"> 2 Days</span></label>
-								  </li>
-								  <li>
-								    <input class="styled-checkbox" id="day-slot-3" type="checkbox" value="value1">
-								    <label for="day-slot-3"><span>Sat</span>  <span>Starting Aug 21</span> <span class="time-slot"><img src="images/clock.svg"> 5 Days</span></label>
-								  </li>
+								<?php endfor; ?>
 							</ul>
 						</div>
 					</div>
@@ -1737,7 +899,7 @@
 							</div>
 							<div class="check-number-row">
 								<button class="blue-btn">Clear</button>
-								<button class="orange-btn">Check Numbers</button>								
+								<button class="orange-btn">Check Numbers</button>
 							</div>
 							<div class="winner-name">
 								<p>5 Apr</p>
@@ -1760,7 +922,7 @@
 								<p class="not-winner-color">Winner! €1,000,000.00</p>
 							</div>
 							</div>
-							
+
 						</div>
 						<div class="cash-prize-warrent-row">
 							<div class="warrent-logo">
@@ -1836,7 +998,7 @@
 				<div class="accordion-container">
 				  <div class="set">
 				    <a href="#">
-				      Quick Facts 
+				      Quick Facts
 				      <i class="down-carret"></i>
 				    </a>
 				    <div class="content">
@@ -1892,7 +1054,7 @@
 				  </div>
 				  <div class="set">
 				    <a href="#">
-				      Why Play? 
+				      Why Play?
 				     <i class="down-carret"></i>
 				    </a>
 					<div class="content">
