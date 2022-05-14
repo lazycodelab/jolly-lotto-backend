@@ -119,9 +119,9 @@ jQuery(document).ready(function(){
 		jQuery(".header-logo-mobile").toggleClass("hide-header-logo");
 	});
 
-	jQuery(".select-ticket-box-row .select-ticket-box span").click(function(){
-		jQuery(this).toggleClass("selected-tokan");
-	});
+	//jQuery(".select-ticket-box-row .select-ticket-box span").click(function(){
+	//	jQuery(this).toggleClass("selected-tokan");
+	//});
 
 
 	const minus = jQuery('.quantity__minus');
@@ -134,6 +134,8 @@ jQuery(document).ready(function(){
 			value--;
 		}
 		input.val(value);
+
+		('[data-draws]').text(value)
 	});
 
 	plus.click(function(e) {
@@ -141,6 +143,8 @@ jQuery(document).ready(function(){
 		var value = input.val();
 		value++;
 		input.val(value);
+
+		$('[data-draws]').text(value)
 	})
 
 

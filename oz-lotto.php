@@ -40,6 +40,21 @@ $drawDays = $lottery->drawDays;
 						}, 1000);
 					}
 
+					function add() {
+						console.log('ss her')
+						const toClone = $('.lottery-table-col[data-count]').last()
+						const nextv = $(toClone).data('count')
+						const g = parseInt(nextv) + 1
+						const h = $(toClone).clone()
+						$(h).attr('data-count', g)
+						$(h).find('input').attr('name', 'ballCount_' + g)
+						$(h).find('input').val(0)
+						$(h).find('span').removeClass('selected-tokan')
+						$(h).insertBefore($('.lottery-table-col[data-last-iv]'))
+
+						$('[data-lines]').text(parseInt($('[data-lines]').text()) + 1)
+					}
+
 					jQuery(function ($) {
 						display = document.querySelector('#cutOff');
 						countdownTimeStart(7);
@@ -72,13 +87,14 @@ $drawDays = $lottery->drawDays;
 						</div>
 					</div>
 					<div class="pro-lottery-table">
-						<div class="lottery-table-col">
+						<div class="lottery-table-col" data-count="1">
+							<input type="hidden" name="ballCount_1" value="0">
 							<div class="lottery-table-col-iner">
 								<div class="lotter-table-head">
 									<div class="table-check-icon">
 										<img src="images/tick-mark.png">
 									</div>
-									<div class="quick-action-row">
+									<div class="quick-action-row"  style="display: block">
 										<div class="acton-btns">
 											<button class="quick-pick">Quick Pick</button>
 											<button class="clear-btn">Clear</button>
@@ -95,7 +111,7 @@ $drawDays = $lottery->drawDays;
 											</div>
 										<?php endfor; ?>
 									</div>
-									<div class="select-no-heading">
+									<!--<div class="select-no-heading">
 										<p>Select 1 Powerball</p>
 									</div>
 									<div class="select-ticket-box-row">
@@ -141,21 +157,76 @@ $drawDays = $lottery->drawDays;
 										<div class="select-ticket-box">
 											<span class="yellow-ticket">14</span>
 										</div>
-									</div>
+									</div>-->
 								</div>
 							</div>
 						</div>
 
-						<div class="lottery-table-col">
+						<div class="lottery-table-col" data-last-iv>
 							<div class="lottery-table-col-iner">
 								<div class="add-line-icon-row">
-									<div class="add-line-icon-col">
+									<div class="add-line-icon-col" onclick="add()">
 										<img src="images/add-plus-icon.svg">
 										<h5>Add Line</h5>
 									</div>
 								</div>
 							</div>
 						</div>
+
+						<script>
+							$(function() {
+								let _uva = 0
+								$('body').on('click', ".select-ticket-box-row .select-ticket-box span", function(){
+									const idx = $(this).parents('.lottery-table-col').data('count')
+									const _felm = $('input[name="ballCount_' + idx)
+									const _fval = $(_felm).val()
+									const mx = parseInt("<?php echo $noOfBalls; ?>")
+									if (!$(this).hasClass('selected-tokan')) {
+										if (_uva < mx ) {
+											jQuery(this).addClass("selected-tokan");
+											_uva = parseInt(_fval) + 1
+										}
+									} else {
+										jQuery(this).removeClass("selected-tokan");
+										_uva = parseInt(_fval) - 1
+									}
+
+
+									$(_felm).val( _uva)
+								});
+
+								//jQuery(".select-ticket-box-row .select-ticket-box span.selected-tokan").click(function(){
+								//	const idx = $(this).parents('.lottery-table-col').data('count')
+								//	const _felm = $('input[name="ballCount_' + idx)
+								//	const _fval = $(_felm).val()
+								//	const mx = parseInt("<?php echo $noOfBalls; ?>")
+
+								//	console.log('sa', mx);
+								//	console.log('saz', _uva);
+								//	if (_uva <= mx) {
+								//		jQuery(this).removeClass("selected-tokan");
+								//		_uva = parseInt(_fval) - 1
+								//	}
+
+								//	$(_felm).val( _uva)
+								//});
+
+								$('body').on('click', '.quick-pick', function() {
+									const mx = parseInt("<?php echo $maxBallNo; ?>")
+									const mnx = parseInt("<?php echo $minBallNo; ?>")
+									$(this).parents('.quick-action-row').siblings('.select-ticket-box-row span').removeClass('selected-tokan')
+									for (let i = 0; i < 7; i++) {
+										const f =  Math.ceil( Math.random() * mx)
+										$(this).parents('.quick-action-row').siblings('.select-ticket-box-row').find('.select-ticket-box:nth-of-type('+ f +'):visible').find('span').addClass('selected-tokan')
+									}
+								})
+
+								$('body').on('click', '.clear-btn', function() {
+									$('.select-ticket-box-row span').removeClass('selected-tokan')
+								})
+							})
+
+						</script>
 					</div>
 				</div>
 				<div class="lottery-ticket-detail-section">
@@ -199,9 +270,9 @@ $drawDays = $lottery->drawDays;
 						</div>
 					</div>
 					<div class="lotto-play-section">
-						<h4>French Lotto</h4>
+						<h4>Oz Lotto</h4>
 						<div class="table-play-block">
-							<span>3 lines x 1 draw</span>
+							<span><span data-lines>1</span> lines x <span data-draws>1</span> draw</span>
 							<span>€296.40</span>
 						</div>
 						<div class="table-play-block">
@@ -848,7 +919,7 @@ $drawDays = $lottery->drawDays;
 											<span>56</span>
 										</div>
 									</div>
-									<div class="select-no-heading">
+									<!--<div class="select-no-heading">
 										<p>Select 1 Powerball</p>
 									</div>
 									<div class="select-ticket-box-row">
@@ -894,7 +965,7 @@ $drawDays = $lottery->drawDays;
 										<div class="select-ticket-box">
 											<span class="yellow-ticket">14</span>
 										</div>
-									</div>
+									</div>-->
 								</div>
 							</div>
 							<div class="check-number-row">
