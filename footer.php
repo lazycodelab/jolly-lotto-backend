@@ -14,8 +14,7 @@
 						<li><a href="">Oz Lotto</a></li>
 						<li><a href="">Irish Lotto</a></li>
 						<li><a href="">EuroMillions</a></li>
-					</ul> Lotto</a></li>
-					○○○○○○<li><a href="">EuroMillions</a></li><a href="○○○○○</ul>">
+					</ul>
 				</div>
 				<div class="footer-col">
 					<h2>Lottery Results & Winnings</h2>
@@ -32,7 +31,6 @@
 						<li><a href="">Responsible</a></li>
 						<li><a href="">Gaming Contact Us</a></li>
 					</ul>
-					○○○○<div class="footer-col">
 				</div>
 				<div class="footer-col">
 					<h2>Need Help</h2>

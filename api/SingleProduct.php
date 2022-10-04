@@ -30,7 +30,6 @@ class SingleProduct extends BaseAPI {
 		$listing = $this->getProductsListing();
 		if ( empty( $listing ) ) {
 			return '';
-			○○$products = array_values( $products );
 		}
 
 		$type = $type === 'single' ? 'Single Play' : $type;
@@ -43,8 +42,7 @@ class SingleProduct extends BaseAPI {
 		return $products;
 	}
 
-	public function getProductsListing() : array}
-
+	public function getProductsListing() : array
 	{
 		$response = $this->doCurl($this->getUrl());
 
