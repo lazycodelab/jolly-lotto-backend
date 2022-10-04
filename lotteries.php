@@ -1,87 +1,90 @@
 <?php include 'header.php';
-require_once 'api/Products.php';
-$api = new Products;
+require_once 'api/SingleProduct.php';
+require_once 'api/SingleResult.php';
+
+$api = new SingleProduct;
+$result = new SingleResult;
+
 $id = $_GET['id'];
+//PRODUCT DETAIL
 $details = $api->fetchDetails($id, 'single');
 
-/*echo "<pre>";
-	print_r( $details );
-echo "</pre>";*/
+//DRAW PRICE
+$customerCurrencyCode = 'EUR';
+$getCurrencySymbol = $api->getCurrencySymbol( $customerCurrencyCode );
+$drawPrice = 0;
+if ( isset( $details->prices ) ) {
+	foreach ( $details->prices as $pricesVal ) {
+		$currencyCode = $pricesVal->currencyCode;
+		if ( $customerCurrencyCode == $currencyCode ) {
+			$drawPrice = $pricesVal->price;
+		}
+	}
+}
 
+//DESCRIPTION
+$description = $details->product->description;
+
+//LOTTERY DETAIL
 $lottery = $details->lottery;
-$noOfBalls = $lottery->numOfBalls;
-$maxBallNo = $lottery->maxBallNumber;
-$minBallNo = $lottery->minBallNumber;
-$drawDays = $lottery->drawDays;
+$lottertName = $lottery->name;
+$noOfBalls   = $lottery->numOfBalls;
+$maxBallNo   = $lottery->maxBallNumber;
+$minBallNo   = $lottery->minBallNumber;
+$drawDays    = $lottery->drawDays;
+$hours = $lottery->cutOffs[0]->hours;
+
+//LOTTERY RESULTS
+$startDate = strtok( $details->product->startDate, 'T');
+$lotteryId = $details->product->lotteryId;
+$lotteryResults = $result->fetchDetails( $lotteryId, $startDate );
+$sortedResult = [];
+foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
+	$drawDate = $v['drawDate'];
+	$date = date_create($drawDate);
+	$date = date_format($date,"M Y");
+	$sortedResult[$date][] = $v;
+}
+
 ?>
-<section class="single-product-page oz-product-bg">
-	<div class="auto-container">
-		<div class="single-product-row">
-			<div class="single-product-icon col-32">
+<section class="jlotto-product-page oz-product-bg">
+	<div class="jlotto-container">
+		<div class="jlotto-product-row">
+			<div class="jlotto-product-icon col-32">
 				<img src="images/OZLotto.png">
 			</div>
 			<div class="single-product-price col-32">
-				<h2>Next Australian 6/45 Lotto</h2>
+				<h2>Next <?php echo $description; ?> Lotto</h2>
 				<h1><sub>€</sub>102 Million</h1>
 			</div>
-			<div class="lottery-draw-time col-32">
-				<p>Draw Cutoff Timer</p>
-				<!--<h5>3 Day(s) 05:23:45</h5>-->
-				<h5 id="cutOff"><?php echo $lottery->cutOffs[0]->hours; ?> hours</h5>
-				<?php $hours = $lottery->cutOffs[0]->hours * 60 * 60; ?>
-				<script>
-					function countdownTimeStart(hours){
-						var countDownDate = new Date("<?php echo $hours; ?>").getTime();
-
-						var x = setInterval(function() {
-							var now = new Date().getTime();
-							var distance = countDownDate - now;
-							var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-							var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-							var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-							document.getElementById("cutOff").innerHTML = hours + ":"
-							+ minutes + ":" + seconds;
-						}, 1000);
-					}
-
-					function add() {
-						const toClone = $('.lottery-table-col[data-count]').last()
-						const nextv = $(toClone).data('count')
-						const g = parseInt(nextv) + 1
-						const h = $(toClone).clone()
-						$(h).attr('data-count', g)
-						$(h).find('input').attr('name', 'ballCount_' + g)
-						$(h).find('input').val(0)
-						$(h).find('span').removeClass('selected-tokan')
-						$(h).find('.trash-icon').removeClass('btn-inactive')						
-						$(h).insertBefore($('.lottery-table-col[data-last-iv]'))
-
-						$('[data-lines]').text(parseInt($('[data-lines]').text()) + 1)
-					}
-
-					jQuery(function ($) {
-						display = document.querySelector('#cutOff');
-						countdownTimeStart(7);
-					});
-				</script>
-			</div>
+			<?php if( $hours >= 1 ){ ?>
+				<div class="lottery-draw-time col-32">
+					<p>Draw Cutoff Timer</p>
+					<h5 id="cutOff">
+						<span class='draw-days'>0</span> Day(s)
+						<span class='draw-hours'><?php echo $hours; ?></span>:
+						<span class='draw-minutes'>0</span>:
+						<span class='draw-seconds'>1</span>
+					</h5>
+				</div>
+			<?php } ?>			
 		</div>
 	</div>
 </section>
 <section class="product-tab-section">
-	<div class="auto-container">
+	<div class="jlotto-container">
 		<div class="product-tab">
 			<ul class="product-tab-list nav-tabs oz-product-bg">
 				<li class="active-list active"><a href="#tab1">Single Play</a></li>
-				<li><a href="#tab2">Syndicate Play</a></li>
-				<li><a href="#tab3">Bundle Play</a></li>
+				<!-- <li><a href="#tab2">Syndicate Play</a></li>
+				<li><a href="#tab3">Bundle Play</a></li> -->
 				<li><a href="#tab4">Results</a></li>
 			</ul>
 			<div class="pro-tab-detail tab-content active" id="tab1">
 				<div class="pro-tab-info-iner">
 					<div class="pro-tab-headings">
-						<h3>Play Oz Lotto</h3>
-						<p><?php echo $details->product->description; ?></p>
+						<h3>Play <?php echo $description; ?></h3>
+						<p><?php echo $description; ?></p>
 					</div>
 					<div class="lottery-option-row">
 						<p>Quickpick, Edit or Delete lines</p>
@@ -91,7 +94,7 @@ $drawDays = $lottery->drawDays;
 						</div>
 					</div>
 					<div class="pro-lottery-table">
-						<div class="lottery-table-col" data-count="1">
+						<div class="lottery-table-col lottery-ticket" data-count="1">
 							<input type="hidden" name="ballCount_1" value="0">
 							<div class="lottery-table-col-iner">
 								<div class="lotter-table-head">
@@ -136,110 +139,24 @@ $drawDays = $lottery->drawDays;
 						<div class="lottery-table-col" data-last-iv>
 							<div class="lottery-table-col-iner">
 								<div class="add-line-icon-row">
-									<div class="add-line-icon-col" onclick="add()">
+									<div class="add-line-icon-col" onclick="addLine(1)">
 										<img src="images/add-plus-icon.svg">
 										<h5>Add Line</h5>
 									</div>
 								</div>
 							</div>
-						</div>
-
-						<script>
-							$(function() {				
-								$('body').on('click', ".select-ticket-box-row .select-ticket-box span", function(){								
-									var idx = $(this).parents('.lottery-table-col').data('count')
-									var _counts = $(this).parents('.select-ticket-box-row').find( 'span.selected-tokan' ).length;
-									console.log('COUNT===>', _counts);
-									var _felm = $('input[name="ballCount_' + idx)
-									var _fval = $(_felm).val()
-									var mx = parseInt("<?php echo $noOfBalls; ?>")
-									if (!$(this).hasClass('selected-tokan')) {
-										if (_counts < mx ) {
-											jQuery(this).addClass("selected-tokan");
-											_counts = parseInt(_fval) + 1
-										}
-									} else {
-										jQuery(this).removeClass("selected-tokan");
-										_counts = parseInt(_fval) - 1
-									}
-									$(_felm).val( _counts)
-								});
-
-								$('body').on('click', '.quick-pick', function() {
-									var _this = $( this )
-									const qty = parseInt("<?php echo $noOfBalls; ?>")
-									const mx = parseInt("<?php echo $maxBallNo; ?>")
-									_this.parents('.quick-action-row').siblings('.select-ticket-box-row').find('span').removeClass('selected-tokan');
-									var gn = generateRandomNum( qty, mx);
-									gn.forEach( f => {
-									  _this.parents('.quick-action-row').siblings('.select-ticket-box-row').find('.select-ticket-box:nth-of-type('+ f +'):visible').find('span').addClass('selected-tokan')
-									});
-									
-								})
-
-								$('body').on('click', '.clear-btn', function() {
-									$( this ).parents('.quick-action-row').siblings('.select-ticket-box-row').find('span').removeClass('selected-tokan');
-								})
-
-
-								$('body').on('click', '.trash-icon', function() {
-									var count_tickets = $('body').find('[data-count]').length;
-									if ( count_tickets > 1 ) {
-										$( this ).parents('.lottery-table-col').remove();
-									}else{
-										alert( 'Please keep at least one ticket' );
-									}						
-									
-								})
-
-
-								$('body').on('click', '[data-btn-quick-pick-all]', function() {
-									quickPickAll();
-								})
-
-								$('body').on('click', '[data-btn-clear-all]', function() {
-									clearAll();
-								})
-
-
-							})
-
-							function generateRandomNum(quantity, max){
-							  const set = new Set()
-							  while(set.size < quantity) {
-							    set.add(Math.floor(Math.random() * max) + 1)
-							  }
-							  return set
-							}
-
-							function quickPickAll(){								
-								const qty = parseInt("<?php echo $noOfBalls; ?>")
-								const mx = parseInt("<?php echo $maxBallNo; ?>")
-								$( '.lottery-table-col' ).each( function(){
-									var _this = $( this )
-									_this.find('.select-ticket-box-row').find('span').removeClass('selected-tokan');
-									var gn = generateRandomNum( qty, mx);
-									gn.forEach( f => {
-									  _this.find('.select-ticket-box-row').find('.select-ticket-box:nth-of-type('+ f +'):visible').find('span').addClass('selected-tokan')
-									});
-								} ) 
-							}
-
-							function clearAll(){
-								$('.select-ticket-box-row').find('span').removeClass('selected-tokan');
-							}
-
-						</script>
+						</div>						
 					</div>
 				</div>
 				<div class="lottery-ticket-detail-section">
+					<input type="hidden" data-draw-price="<?php echo $drawPrice; ?>">
 					<div class="ticket-discription-col">
 						<div class="lottery-duration-row">
 							<h4>Duration</h4>
 							  <div class="duration-quantity">
 							    <a href="#" class="quantity__minus"><span>-</span></a>
 							    <div class="input-counter">
-							    <input name="quantity" type="text" class="quantity__input" value="1">
+							    <input name="quantity" type="text" class="quantity__input" value="1" data-week-duration>
 							    Week
 							    </div>
 							    <a href="#" class="quantity__plus"><span>+</span></a>
@@ -249,17 +166,25 @@ $drawDays = $lottery->drawDays;
 							<h4>Select your Draw Days</h4>
 							<ul>
 								<?php for ($i = 0; $i < count($drawDays); $i++) :
+									$totalDays = count($drawDays) - 1;
+									$checked = '';
+									if( $i == $totalDays )
+										$checked = 'checked';
 									$day = $drawDays[$i];
-									$earlier = new DateTime("Tuesday");
+									$earlier = new DateTime("$day->drawDay");
 									$later = new DateTime("now");
-
 									$abs_diff = $later->diff($earlier)->format("%a");
-
 									$dateHuman = $earlier->format("M d");
-									?>
+								?>
 								 <li>
-								    <input class="styled-checkbox" id="day-slot-1" type="checkbox" value="value1">
-								    <label for="day-slot-1"><span><?php echo $day->drawDay; ?></span>  <span><?php echo $dateHuman; ?></span> <span class="time-slot"><img src="images/clock.svg"> <?php echo $abs_diff; ?> days</span></label>
+								    <input class="styled-checkbox" id="day-slot-<?php echo $i; ?>" name="drawDays[]" type="checkbox" value="<?php echo $day->drawDay; ?>" <?php echo $checked; ?> data-lottery-draw-days>
+								    <label for="day-slot-<?php echo $i; ?>">
+								    	<span><?php echo $day->drawDay; ?></span>
+								    	<span><?php echo $dateHuman; ?></span>
+								    	<span class="time-slot">
+								    		<img src="images/clock.svg"><?php echo $abs_diff; ?> days
+								    	</span>
+								    </label>
 								  </li>
 								<?php endfor; ?>
 							</ul>
@@ -269,18 +194,14 @@ $drawDays = $lottery->drawDays;
 						<h4>Oz Lotto</h4>
 						<div class="table-play-block">
 							<span><span data-lines>1</span> lines x <span data-draws>1</span> draw</span>
-							<span>€296.40</span>
-						</div>
-						<div class="table-play-block">
-							<span class="discount-color">Discount</span>
-							<span class="discount-color">€44.50</span>
+							<span>€<span data-lotto-total><?php echo $drawPrice;?></span></span>
 						</div>
 						<div class="table-play-block play-totel">
 							<span><b>Total:</b></span>
-							<span><b>€251.90</b></span>
+							<span><b>€<span data-lotto-total><?php echo $drawPrice;?></span></b></span>
 						</div>
 						<div class="table-play-block">
-							<button class="orange-btn">Play Now</button>
+							<button class="jlotto-play-lottery">Play Now</button>
 						</div>
 					</div>
 				</div>
@@ -294,14 +215,101 @@ $drawDays = $lottery->drawDays;
 							<h3>French Lotto Results</h3>
 							<p>Small paragraph to help with SEO and Marketing details. <br>Lorem ipsum dolor sir amet...</p>
 						</div>
-						<div class="select-month">
-							<label>Select Month</label>
-							<select>
-								<option>April 2021</option>
-								<option>April 2021</option>
-								<option>April 2021</option>
-							</select>
-						</div>
+						<?php  if ( !empty( $sortedResult ) ) { 
+							$monthYear = $resultList = '';
+							$i = 1;
+							foreach ( $sortedResult as $month => $lottoResult ) {
+								$display = '';
+								if ( $i != 1 )
+									$display  = 'style="display:none;"';
+
+								$monthYear .= '<option value="'.$month.'" '.$selected.'>'.$month.'</option>';
+								$resultList .= '<div class="result-warp-by-month" data-result-month="'.$month.'" '.$display.'>';
+								foreach ( $lottoResult as $lottoData ) {
+									$resultList .= '<div class="result-accordian-slider">';
+									$lottoDrawDate = date_create($lottoData['drawDate']);
+									$lottoDrawDate = date_format($lottoDrawDate,"d M");
+									$resultList .= '<div class="result-accordian-body">
+											<div class="table-date">
+												<p>'.$lottoDrawDate.'</p>
+											</div>
+											<div class="table-prize">
+												<p>'.$getCurrencySymbol.$lottoData['jackpot'].'</p>
+											</div>
+											<div class="table-number">
+												<div class="table-number-row">';
+												$board = explode( ',', $lottoData['board'] );
+												foreach ($board as $num) {
+													$resultList .= '<span class="bg-grey">'.$num.'</span>';
+												}
+									$resultList .= '</div>
+											</div>
+										</div>
+										<div class="result-accordian-slide-bottom" style="display:none">
+											<div class="result-accordian-slide-info">
+												<div class="slide-info-head">
+													<div class="prize-tier">
+														<p><b>Prize Tiers</b></p>
+													</div>
+													<div class="winner-prize">
+														<p><b>Winners</b></p>
+													</div>
+													<div class="prize-value">
+														<p><b>Prize Value</b></p>
+													</div>
+													<div class="prize-payout">
+														<p><b>Prize Payout</b></p>
+													</div>
+												</div>';
+												$breakdowns = $lottoData['breakdowns'];
+												$totalPrizes = 0;
+												foreach ($breakdowns as $bdval) { 													
+													$totalPrizes += $bdval['winners'];
+													$resultList .= '<div class="slide-info-body">
+																		<div class="prize-tier">
+																			<p>'.$bdval['type'].'</p>
+																		</div>
+																		<div class="winner-prize">
+																			<p>'.$bdval['winners'].'</p>
+																		</div>
+																		<div class="prize-value">
+																			<p>'.$getCurrencySymbol.$bdval['amount'].'</p>
+																		</div>
+																		<div class="prize-payout">
+																			<p>0</p>
+																		</div>
+																	</div>';
+												}
+									$resultList .= '<div class="slide-info-footer">
+														<div class="prize-tier">
+															<p><b>Total</b></p>
+														</div>
+														<div class="winner-prize">
+															<p>'.$totalPrizes.'</p>
+														</div>
+														<div class="prize-value">
+															<p></p>
+														</div>
+														<div class="prize-payout">
+															<p>0</p>
+														</div>
+													</div>
+												</div>
+										</div>
+									</div>';
+								}
+								$resultList .= '</div>';
+								$i++;
+							}
+							?>
+							<div class="select-month">
+								<label>Select Month</label>
+								<select id="lottery-result-month" data-select-result-month>
+									<?php echo $monthYear; ?>
+								</select>
+							</div>
+						<?php } ?>
+						
 						<div class="result-accordian-section">
 							<div class="result-table-title">
 								<h3>Results</h3>
@@ -319,393 +327,9 @@ $drawDays = $lottery->drawDays;
 											<p>Numbers</p>
 										</div>
 									</div>
-									<div class="result-accordian-slider">
-										<div class="result-accordian-body">
-											<div class="table-date">
-												<p>5 Apr</p>
-											</div>
-											<div class="table-prize">
-												<p>€14,742,433.31</p>
-											</div>
-											<div class="table-number">
-												<div class="table-number-row"><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-yellow">08</span><span class="bg-yellow">08</span></div>
-											</div>
-										</div>
-										<div class="result-accordian-slide-bottom" style="display:none">
-											<div class="result-accordian-slide-info">
-												<div class="slide-info-head">
-													<div class="prize-tier">
-														<p><b>Prize Tiers</b></p>
-													</div>
-													<div class="winner-prize">
-														<p><b>Winners</b></p>
-													</div>
-													<div class="prize-value">
-														<p><b>Prize Value</b></p>
-													</div>
-													<div class="prize-payout">
-														<p><b>Prize Payout</b></p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>6/6 Numbers</p>
-													</div>
-													<div class="winner-prize">
-														<p>2</p>
-													</div>
-													<div class="prize-value">
-														<p>A$408,302.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$4,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>5/6 +</p>
-													</div>
-													<div class="winner-prize">
-														<p>15</p>
-													</div>
-													<div class="prize-value">
-														<p>A$6,302.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>5/6</p>
-													</div>
-													<div class="winner-prize">
-														<p>1,222</p>
-													</div>
-													<div class="prize-value">
-														<p>A$302.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>4/6</p>
-													</div>
-													<div class="winner-prize">
-														<p>67,543</p>
-													</div>
-													<div class="prize-value">
-														<p>A$22.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>3/6 +</p>
-													</div>
-													<div class="winner-prize">
-														<p>123,544</p>
-													</div>
-													<div class="prize-value">
-														<p>A$12.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>1/6 or 2/6 +</p>
-													</div>
-													<div class="winner-prize">
-														<p>220,546</p>
-													</div>
-													<div class="prize-value">
-														<p>A$11.50</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-footer">
-													<div class="prize-tier">
-														<p><b>Total</b></p>
-													</div>
-													<div class="winner-prize">
-														<p>55,565</p>
-													</div>
-													<div class="prize-value">
-														<p></p>
-													</div>
-													<div class="prize-payout">
-														<p>A$14,555,565,58</p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="result-accordian-slider">
-										<div class="result-accordian-body">
-											<div class="table-date">
-												<p>12 Apr</p>
-											</div>
-											<div class="table-prize">
-												<p>€1,742,433.45</p>
-											</div>
-											<div class="table-number">
-												<div class="table-number-row"><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-yellow">08</span><span class="bg-yellow">08</span></div>
-											</div>
-										</div>
-										<div class="result-accordian-slide-bottom" style="display:none">
-											<div class="result-accordian-slide-info">
-												<div class="slide-info-head">
-													<div class="prize-tier">
-														<p><b>Prize Tiers</b></p>
-													</div>
-													<div class="winner-prize">
-														<p><b>Winners</b></p>
-													</div>
-													<div class="prize-value">
-														<p><b>Prize Value</b></p>
-													</div>
-													<div class="prize-payout">
-														<p><b>Prize Payout</b></p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>6/6 Numbers</p>
-													</div>
-													<div class="winner-prize">
-														<p>2</p>
-													</div>
-													<div class="prize-value">
-														<p>A$408,302.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$4,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>5/6 +</p>
-													</div>
-													<div class="winner-prize">
-														<p>15</p>
-													</div>
-													<div class="prize-value">
-														<p>A$6,302.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>5/6</p>
-													</div>
-													<div class="winner-prize">
-														<p>1,222</p>
-													</div>
-													<div class="prize-value">
-														<p>A$302.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>4/6</p>
-													</div>
-													<div class="winner-prize">
-														<p>67,543</p>
-													</div>
-													<div class="prize-value">
-														<p>A$22.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>3/6 +</p>
-													</div>
-													<div class="winner-prize">
-														<p>123,544</p>
-													</div>
-													<div class="prize-value">
-														<p>A$12.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>1/6 or 2/6 +</p>
-													</div>
-													<div class="winner-prize">
-														<p>220,546</p>
-													</div>
-													<div class="prize-value">
-														<p>A$11.50</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-footer">
-													<div class="prize-tier">
-														<p><b>Total</b></p>
-													</div>
-													<div class="winner-prize">
-														<p>55,565</p>
-													</div>
-													<div class="prize-value">
-														<p></p>
-													</div>
-													<div class="prize-payout">
-														<p>A$14,555,565,58</p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="result-accordian-slider">
-										<div class="result-accordian-body">
-											<div class="table-date">
-												<p>18 Apr</p>
-											</div>
-											<div class="table-prize">
-												<p>€842,433.81</p>
-											</div>
-											<div class="table-number">
-												<div class="table-number-row"><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-grey">08</span><span class="bg-yellow">08</span><span class="bg-yellow">08</span></div>
-											</div>
-										</div>
-										<div class="result-accordian-slide-bottom" style="display:none">
-											<div class="result-accordian-slide-info">
-												<div class="slide-info-head">
-													<div class="prize-tier">
-														<p><b>Prize Tiers</b></p>
-													</div>
-													<div class="winner-prize">
-														<p><b>Winners</b></p>
-													</div>
-													<div class="prize-value">
-														<p><b>Prize Value</b></p>
-													</div>
-													<div class="prize-payout">
-														<p><b>Prize Payout</b></p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>6/6 Numbers</p>
-													</div>
-													<div class="winner-prize">
-														<p>2</p>
-													</div>
-													<div class="prize-value">
-														<p>A$408,302.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$4,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>5/6 +</p>
-													</div>
-													<div class="winner-prize">
-														<p>15</p>
-													</div>
-													<div class="prize-value">
-														<p>A$6,302.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>5/6</p>
-													</div>
-													<div class="winner-prize">
-														<p>1,222</p>
-													</div>
-													<div class="prize-value">
-														<p>A$302.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>4/6</p>
-													</div>
-													<div class="winner-prize">
-														<p>67,543</p>
-													</div>
-													<div class="prize-value">
-														<p>A$22.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>3/6 +</p>
-													</div>
-													<div class="winner-prize">
-														<p>123,544</p>
-													</div>
-													<div class="prize-value">
-														<p>A$12.66</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-body">
-													<div class="prize-tier">
-														<p>1/6 or 2/6 +</p>
-													</div>
-													<div class="winner-prize">
-														<p>220,546</p>
-													</div>
-													<div class="prize-value">
-														<p>A$11.50</p>
-													</div>
-													<div class="prize-payout">
-														<p>A$1,565,711.50</p>
-													</div>
-												</div>
-												<div class="slide-info-footer">
-													<div class="prize-tier">
-														<p><b>Total</b></p>
-													</div>
-													<div class="winner-prize">
-														<p>55,565</p>
-													</div>
-													<div class="prize-value">
-														<p></p>
-													</div>
-													<div class="prize-payout">
-														<p>A$14,555,565,58</p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
+
+									<?php echo $resultList; ?>
+
 								</div>
 							</div>
 						</div>
@@ -729,7 +353,7 @@ $drawDays = $lottery->drawDays;
 								</div>
 								<div class="form-field full-width">
 									<div class="align-btn">
-									<button class="orange-btn">Subscribe</button>
+									<button class="jlotto-play-lottery">Subscribe</button>
 									</div>
 								</div>
 								<div class="form-bottom-img">
@@ -966,7 +590,7 @@ $drawDays = $lottery->drawDays;
 							</div>
 							<div class="check-number-row">
 								<button class="blue-btn">Clear</button>
-								<button class="orange-btn">Check Numbers</button>
+								<button class="jlotto-play-lottery">Check Numbers</button>
 							</div>
 							<div class="winner-name">
 								<p>5 Apr</p>
@@ -1012,7 +636,7 @@ $drawDays = $lottery->drawDays;
 									<li>Great Price</li>
 								</ul>
 								<div class="align-btn">
-								<button class="orange-btn">Play Now</button>
+								<button class="jlotto-play-lottery">Play Now</button>
 							</div>
 							</div>
 						</div>
@@ -1023,7 +647,7 @@ $drawDays = $lottery->drawDays;
 	</div>
 </section>
 <section class="play-country-lotto-section bg-for-oz">
-	<div class="auto-container">
+	<div class="jlotto-container">
 		<div class="play-country-lotto-row">
 			<div class="play-country-lotto-col">
 				<h2>Play Australian 6/45 Lotto</h2>
@@ -1152,4 +776,12 @@ $drawDays = $lottery->drawDays;
 		</div>
 	</div>
 </section>
+<script>
+	lottery = {
+		cutOffsHours: <?php if( isset( $hours ) && !empty( $hours ) ){ echo $hours; }else{ echo ""; } ?>,
+		numOfBalls: <?php if( isset( $noOfBalls ) && !empty( $noOfBalls ) ){ echo $noOfBalls; }else{ echo ""; } ?>,
+		maxBallNumber: <?php if( isset( $maxBallNo ) && !empty( $maxBallNo ) ){ echo $maxBallNo; }else{ echo ""; } ?>,
+		minBallNumber: <?php if( isset( $minBallNo ) && !empty( $minBallNo ) ){ echo $minBallNo; }else{ echo ""; } ?>,
+	};
+</script>
 <?php include 'footer.php' ?>

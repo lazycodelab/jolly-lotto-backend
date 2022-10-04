@@ -12,16 +12,15 @@
   	<link rel="stylesheet" href="assets/css/jquery-ui.css">
   	<link rel="stylesheet" type="text/css" href="assets/css/slick.css">
   	<link rel="stylesheet" type="text/css" href="assets/css/style.css?v=1.0.0">
-
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/js/jquery-ui-js.js"></script>
 </head>
 <body>
 <header>
-	<div class="auto-container header-deskop">
+	<div class="jlotto-container header-deskop">
 		<div class="header-flex">
 			<div class="header-logo">
-				<a href=""><img src="images/JollyLottoLogo.svg"></a>
+				<a href="<?php echo "https://" . $_SERVER['SERVER_NAME'] ."/jollylotto" ; ?>"><img src="images/JollyLottoLogo.svg"></a>
 			</div>
 			<div class="header-right-block">
 				<div class="header-top-bar">

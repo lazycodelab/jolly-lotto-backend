@@ -66,4 +66,27 @@ abstract class BaseAPI {
 		curl_close($ch);
 		return $token;
 	}
+
+	public function getCurrencySymbol( string $currencyCode )
+	{
+		if($currencyCode == "EUR"){
+			return '&euro;';
+		} else if($currencyCode == "GBP"){
+			return '&#163;';
+		} else if($currencyCode == "USD"){
+			return '&dollar;';
+		} else if($currencyCode == "CAD"){
+			return '&dollar;';
+		} else if($currencyCode == "JPY"){
+			return '&#165;';
+		} else if($currencyCode == "AUD"){
+			return 'A&dollar;';
+		} else if($currencyCode == "NZD"){
+			return 'NZ&dollar;';
+		} else if($currencyCode == "ZAR"){
+			return 'R';
+		} else {
+			return '';
+		}
+}
 }

@@ -1,6 +1,19 @@
-<?php include 'header.php' ?>
+<?php 
+/*ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);*/
+
+include 'header.php';
+require_once 'api/SingleAllResults.php';
+
+$api = new SingleAllResults;
+$details = $api->fetchDetails();
+echo "<pre>";
+	print_r( $details );
+echo "</pre>";
+?>
 <section class="contactUs-page lottery-result-page">
-	<div class="auto-container">
+	<div class="jlotto-container">
 		<div class="contactUs-row">
 			<div class="contactUs-disc">
 				<h1>Lottery Results</h1>

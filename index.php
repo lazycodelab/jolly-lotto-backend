@@ -1,14 +1,21 @@
 <?php
 include 'header.php';
-require_once 'api/Products.php';
+require_once 'api/SingleProduct.php';
 
-$api = new Products;
-//$products = $api->getProductsListing();
-$products = [];
+$api = new SingleProduct;
+$products = $api->getProductsListing();
+/*echo "<pre>";
+print_r( $api->getProductListing('single') );
+//print_r( $products );
+echo "</pre>";
+die();*/
+//$products = [];
+
+$products = $api->getProductListing('single');
 
 ?>
 <section class="baner-section">
-	<div class="auto-container">
+	<div class="jlotto-container">
 		<div class="banner-slider-row" id="home-banner-slider">
 			<div class="banner-slider">
 				<div class="banner-man">
@@ -36,35 +43,12 @@ $products = [];
 	</div>
 </section>
 <section class="play-lottery-section">
-	<div class="auto-container">
+	<div class="jlotto-container">
 		<div class="play-lottery-title">
 			<h2>PLAY THE WORLDS BIGGEST LOTTERIES ONLINE AT JOLLYLOTTO.COM</h2>
 		</div>
 			<div class="play-lotery-row" id="play-lotery-row">
-								<div class="lottery-slide-col">
-					<div class="lottery-slide-iner bg-yellow">
-						<img src="images/left-curve.png" class="left-curve-image">
-						<img src="images/right-curve.png" class="right-curve-image">
-						<div class="lottery-slide-box">
-							<div class="lottery-icon">
-								<img src="images/Australian6-45.png">
-							</div>
-							<div class="lotter-price">
-								<span class="lotery-tick-name">AUSTRALIAN 6/45</span>
-								<sub>AU$</sub><b>25.00M</b>
-							</div>
-							<div class="play-now-btn">
-								<a href="oz-lotto.php?id=4aa84571-aad3-4ee6-8933-08d9585e70ee">Play Now</a>
-							</div>
-							<div class="lottery-day">
-								<p>1 DAY 22:58:21</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<?php foreach( $products as $product ) :
-					$details = $api->fetchDetails($product['id'], $product['productType']); ?>
-
+				<?php foreach( $products as $product ) : ?>
 					<div class="lottery-slide-col">
 						<div class="lottery-slide-iner bg-yellow">
 							<img src="images/left-curve.png" class="left-curve-image">
@@ -75,10 +59,10 @@ $products = [];
 								</div>
 								<div class="lotter-price">
 									<span class="lotery-tick-name"><?php echo $product['lotteryName']; ?></span>
-									<sub><?php echo $product['currencyCode']; ?></sub><b><?php echo $product['price']; ?>M</b>
+									<sub><?php echo $product['name']; ?></sub><b><?php echo $product['price']; ?>M</b>
 								</div>
 								<div class="play-now-btn">
-									<a href="/australian.php">Play Now</a>
+									<a href="lotteries.php?id=<?php echo $product['id']; ?>">Play Now</a>
 								</div>
 								<div class="lottery-day">
 									<p>1 DAY 22:58:21</p>
@@ -91,7 +75,7 @@ $products = [];
 	</div>
 </section>
 <section class="we-do-work">
-	<div class="auto-container">
+	<div class="jlotto-container">
 		<div class="we-do-work-row">
 			<div class="we-do-work-col">
 				<div class="we-do-disc">
@@ -127,7 +111,7 @@ $products = [];
 	</div>
 </section>
 <section class="exciting-section">
-	<div class="auto-container">
+	<div class="jlotto-container">
 		<div class="we-do-work-row">
 			<div class="we-do-work-col">
 				<div class="excitimg-disc">
