@@ -14,6 +14,7 @@
   	<link rel="stylesheet" type="text/css" href="assets/css/style.css?v=1.0.0">
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/js/jquery-ui-js.js"></script>
+	<title>Jolly Lotto</title>
 </head>
 <body>
 <header>
