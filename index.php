@@ -1,17 +1,9 @@
 <?php
 include 'header.php';
-require_once 'api/SingleProduct.php';
+require_once 'api/Products.php';
 
-$api = new SingleProduct;
-$products = $api->getProductsListing();
-/*echo "<pre>";
-print_r( $api->getProductListing('single') );
-//print_r( $products );
-echo "</pre>";
-die();*/
-//$products = [];
-
-$products = $api->getProductListing('single');
+$api = new Products;
+$products = $api->getSingleProductListing();
 
 ?>
 <section class="baner-section">

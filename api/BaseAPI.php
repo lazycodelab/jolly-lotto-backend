@@ -1,12 +1,40 @@
 <?php
 
 abstract class BaseAPI {
+	private $_cachePath = __DIR__ . '/../_cached';
 	protected $token;
 	protected $api = 'https://gateway.cloudandahalf.com/';
 
 	public function __construct()
 	{
-		$this->token = $this->_getAuthToken();
+		$this->token = $this->getCacheData( 'token' );
+
+		if ( null === $this->token ) {
+			$this->token = $this->_authenticate();
+		}
+	}
+
+	public function getCurrencySymbol( string $currencyCode )
+	{
+		if($currencyCode == "EUR"){
+			return '&euro;';
+		} else if($currencyCode == "GBP"){
+			return '&#163;';
+		} else if($currencyCode == "USD"){
+			return '&dollar;';
+		} else if($currencyCode == "CAD"){
+			return '&dollar;';
+		} else if($currencyCode == "JPY"){
+			return '&#165;';
+		} else if($currencyCode == "AUD"){
+			return 'A&dollar;';
+		} else if($currencyCode == "NZD"){
+			return 'NZ&dollar;';
+		} else if($currencyCode == "ZAR"){
+			return 'R';
+		} else {
+			return '';
+		}
 	}
 
 	protected function doCurl(string $url, bool $post = false, array $params = [])
@@ -36,7 +64,21 @@ abstract class BaseAPI {
 		}
 		curl_close($ch);
 
-		return $response;
+		// Check of the authentication has expired.
+		$_checkResp = json_decode( $response, true );
+
+		if ( array_key_exists('properties', $_checkResp) && null === $_checkResp['properties'] ) {
+			// Auth has expired. Let's reauthenticate.
+			echo '<pre>';
+			print_r('we here');
+			echo '</pre>';
+			$this->_authenticate();
+
+			// @todo: fix this. Now redo the curl call.
+			$this->doCurl( $url );
+		} else {
+			return $response;
+		}
 	}
 
 	protected function getURL()
@@ -44,7 +86,25 @@ abstract class BaseAPI {
 		return $this->api . $this->endpoint;
 	}
 
-	private function _getAuthToken()
+	protected function setCacheData( $data, string $type )
+	{
+		// Save the token either in a file or a db.
+		file_put_contents( "{$this->_cachePath}/{$type}", $data );
+	}
+
+	protected function getCacheData( $type )
+	{
+		$data = null;
+
+		// Check if the file exists.
+		if ( file_exists( "{$this->_cachePath}/{$type}" ) ) {
+			$data = file_get_contents( "{$this->_cachePath}/{$type}" );
+		}
+
+		return $data;
+	}
+
+	private function _authenticate()
 	{
 		$params = ['clientId'=>'26708f82-d16d-4eea-ba50-4D86DDF7761A', 'clientSecurity'=>'0a5bdf3b-e80e-45c6-8134-419AABA3D2D8'];
 		$params = json_encode($params);
@@ -59,34 +119,17 @@ abstract class BaseAPI {
 		curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch,CURLOPT_FAILONERROR,true);
 		$token = curl_exec($ch);
+
 		if (curl_errno($ch)) {
-		$error_msg = curl_error($ch);
-		return '==>'.$error_msg;
+			$error_msg = curl_error($ch);
+			return '==>'.$error_msg;
 		}
+
 		curl_close($ch);
+
+		// Cache the token value.
+		$this->setCacheData( $token, 'token' );
+
 		return $token;
 	}
-
-	public function getCurrencySymbol( string $currencyCode )
-	{
-		if($currencyCode == "EUR"){
-			return '&euro;';
-		} else if($currencyCode == "GBP"){
-			return '&#163;';
-		} else if($currencyCode == "USD"){
-			return '&dollar;';
-		} else if($currencyCode == "CAD"){
-			return '&dollar;';
-		} else if($currencyCode == "JPY"){
-			return '&#165;';
-		} else if($currencyCode == "AUD"){
-			return 'A&dollar;';
-		} else if($currencyCode == "NZD"){
-			return 'NZ&dollar;';
-		} else if($currencyCode == "ZAR"){
-			return 'R';
-		} else {
-			return '';
-		}
-}
 }

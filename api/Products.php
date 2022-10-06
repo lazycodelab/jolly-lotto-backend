@@ -2,14 +2,14 @@
 include_once 'BaseAPI.php';
 
 class Products extends BaseAPI {
-	protected $endpoint  = 'crow/api/allproducts/LE';
-	protected $url;
 	public $products = [];
+	protected $endpoint  = 'crow/api/allproducts/LE';
 
 	public function __construct()
 	{
 		parent::__construct();
 		$this->url = $this->api . $this->endpoint;
+		$this->products = $this->getProductsListing();
 	}
 
 	public function fetchDetails(string $id, string $type)
@@ -26,8 +26,34 @@ class Products extends BaseAPI {
 
 	public function getProductsListing() : array
 	{
-		$response = $this->doCurl($this->getUrl());
+		$data = $this->getCacheData( 'products' );
 
-		return json_decode($response, TRUE);
+		echo '<pre>';
+		print_r($data);
+		echo '</pre>';
+		if ( ! $data ) {
+			$data = $this->doCurl( $this->getUrl() );
+			// Cache the products.
+			$this->setCacheData( $data, 'products' );
+		}
+
+		$products = json_decode( $data, true );
+		return $products;
+	}
+
+	public function getSingleProductListing() : array
+	{
+		$_cachedProducts = $this->products;
+		$singleProducts = [];
+		$type = 'Single Play';
+
+		if ( null !== $_cachedProducts ) {
+			// Filter only "Single Play" lotteries here.
+			$singleProducts = array_filter( $_cachedProducts, function ( $var ) use ( $type ){
+				return ( $var['productType'] == $type && $var['lotteryId'] != '' );
+			});
+		}
+
+		return $singleProducts;
 	}
 }
