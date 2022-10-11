@@ -1,50 +1,44 @@
 <?php include 'header.php';
-require_once 'api/SingleProduct.php';
+require_once 'api/ProductSingleDetails.php';
 require_once 'api/SingleResult.php';
 
-$api = new SingleProduct;
+$api = new ProductSingleDetails;
 $result = new SingleResult;
 
 $id = $_GET['id'];
 //PRODUCT DETAIL
-$details = $api->fetchDetails($id, 'single');
-
-//DRAW PRICE
-$customerCurrencyCode = 'EUR';
-$getCurrencySymbol = $api->getCurrencySymbol( $customerCurrencyCode );
-$drawPrice = 0;
-if ( isset( $details->prices ) ) {
-	foreach ( $details->prices as $pricesVal ) {
-		$currencyCode = $pricesVal->currencyCode;
-		if ( $customerCurrencyCode == $currencyCode ) {
-			$drawPrice = $pricesVal->price;
-		}
-	}
-}
-
-//DESCRIPTION
+$details = $api->fetchDetails( $id );
+$drawPrice = $api->getProductPrice();
 $description = $details->product->description;
+$currencySymbol = $api->getCurrencySymbol( $details->lottery->currencyCode );
 
 //LOTTERY DETAIL
 $lottery = $details->lottery;
-$lottertName = $lottery->name;
+$lotteryName = $lottery->name;
 $noOfBalls   = $lottery->numOfBalls;
 $maxBallNo   = $lottery->maxBallNumber;
 $minBallNo   = $lottery->minBallNumber;
 $drawDays    = $lottery->drawDays;
 $hours = $lottery->cutOffs[0]->hours;
 
+$bonusBallName = $lottery->bonusBalls[0]->name;
+$totalBonusBalls = $lottery->bonusBalls[0]->ballNumber;
+$minBonusBalls = $lottery->bonusBalls[0]->minNumber;
+$maxBonusBalls = $lottery->bonusBalls[0]->maxNumber;
+
+
 //LOTTERY RESULTS
 $startDate = strtok( $details->product->startDate, 'T');
 $lotteryId = $details->product->lotteryId;
-$lotteryResults = $result->fetchDetails( $lotteryId, $startDate );
-$sortedResult = [];
-foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
-	$drawDate = $v['drawDate'];
-	$date = date_create($drawDate);
-	$date = date_format($date,"M Y");
-	$sortedResult[$date][] = $v;
-}
+//$lotteryResults = $result->fetchDetails( $lotteryId, $startDate );
+
+//$sortedResult = [];
+//foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
+//	$drawDate = $v['drawDate'];
+//	$date = date_create($drawDate);
+//	$date = date_format($date,"M Y");
+//	$sortedResult[$date][] = $v;
+//}
 
 ?>
 <section class="jlotto-product-page oz-product-bg">
@@ -55,7 +49,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 			</div>
 			<div class="single-product-price col-32">
 				<h2>Next <?php echo $description; ?> Lotto</h2>
-				<h1><sub>€</sub>102 Million</h1>
+				<h1><sub><?php echo $currencySymbol; ?></sub><?php echo $details->product->price; ?> Million</h1>
 			</div>
 			<?php if( $hours >= 1 ){ ?>
 				<div class="lottery-draw-time col-32">
@@ -67,7 +61,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 						<span class='draw-seconds'>1</span>
 					</h5>
 				</div>
-			<?php } ?>			
+			<?php } ?>
 		</div>
 	</div>
 </section>
@@ -89,8 +83,8 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 					<div class="lottery-option-row">
 						<p>Quickpick, Edit or Delete lines</p>
 						<div class="lottery-opt-btn">
-							<button data-btn-quick-pick-all>Quick Pick All</button>
-							<button data-btn-clear-all>Clear All</button>
+							<button data-btn-quick-pick-all onclick="multiQuickPick()">Quick Pick All</button>
+							<button data-btn-clear-all onclick="multiResetPick()">Clear All</button>
 						</div>
 					</div>
 					<div class="pro-lottery-table">
@@ -103,35 +97,31 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 									</div>
 									<div class="quick-action-row"  style="display: block">
 										<div class="acton-btns">
-											<button class="quick-pick">Quick Pick</button>
-											<button class="clear-btn">Clear</button>
-											<button class="trash-icon btn-inactive"><img src="images/IconTrash.svg"></button>
+											<button class="quick-pick" onclick="singleQuickPick(this)">Quick Pick</button>
+											<button class="clear-btn" onclick="singleResetPick(this)">Clear</button>
+											<button class="trash-icon"><img src="images/IconTrash.svg"></button>
 										</div>
 									</div>
 									<div class="select-no-heading">
 										<p>Select <?php echo $noOfBalls; ?> Numbers</p>
 									</div>
-									<div class="select-ticket-box-row">
+									<div class="select-ticket-box-row" data-lottery-numbers>
 										<?php for ($i = $minBallNo; $i <= $maxBallNo; $i++) : ?>
 											<div class="select-ticket-box">
 												<span><?php echo $i; ?></span>
 											</div>
 										<?php endfor; ?>
 									</div>
-									<!--<div class="select-no-heading">
-										<p>Select 1 Powerball</p>
+									<div class="select-no-heading">
+										<p>Select <?php echo $totalBonusBalls . ' ' .  $bonusBallName; ?></p>
 									</div>
-									<div class="select-ticket-box-row">
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">1</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">2</span>
-										</div>
-										<div class="select-ticket-box">
-											<span class="yellow-ticket">3</span>
-										</div>
-									</div>-->
+									<div class="select-ticket-box-row" data-bonus-numbers>
+										<?php for ($i = $minBonusBalls; $i <= $maxBonusBalls; $i++) : ?>
+											<div class="select-ticket-box">
+												<span class="yellow-ticket"><?php echo $i; ?></span>
+											</div>
+										<?php endfor; ?>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -145,7 +135,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 									</div>
 								</div>
 							</div>
-						</div>						
+						</div>
 					</div>
 				</div>
 				<div class="lottery-ticket-detail-section">
@@ -191,14 +181,14 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 						</div>
 					</div>
 					<div class="lotto-play-section">
-						<h4>Oz Lotto</h4>
+						<h4><?php echo $details->lottery->name; ?></h4>
 						<div class="table-play-block">
 							<span><span data-lines>1</span> lines x <span data-draws>1</span> draw</span>
-							<span>€<span data-lotto-total><?php echo $drawPrice;?></span></span>
+							<span><?php echo $currencySymbol; ?><span data-lotto-total><?php echo $drawPrice;?></span></span>
 						</div>
 						<div class="table-play-block play-totel">
 							<span><b>Total:</b></span>
-							<span><b>€<span data-lotto-total><?php echo $drawPrice;?></span></b></span>
+							<span><b><?php echo $currencySymbol; ?><span data-lotto-total><?php echo $drawPrice;?></span></b></span>
 						</div>
 						<div class="table-play-block">
 							<button class="jlotto-play-lottery">Play Now</button>
@@ -215,7 +205,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 							<h3>French Lotto Results</h3>
 							<p>Small paragraph to help with SEO and Marketing details. <br>Lorem ipsum dolor sir amet...</p>
 						</div>
-						<?php  if ( !empty( $sortedResult ) ) { 
+						<?php  if ( !empty( $sortedResult ) ) {
 							$monthYear = $resultList = '';
 							$i = 1;
 							foreach ( $sortedResult as $month => $lottoResult ) {
@@ -234,7 +224,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 												<p>'.$lottoDrawDate.'</p>
 											</div>
 											<div class="table-prize">
-												<p>'.$getCurrencySymbol.$lottoData['jackpot'].'</p>
+												<p>'.$currencySymbol.$lottoData['jackpot'].'</p>
 											</div>
 											<div class="table-number">
 												<div class="table-number-row">';
@@ -263,7 +253,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 												</div>';
 												$breakdowns = $lottoData['breakdowns'];
 												$totalPrizes = 0;
-												foreach ($breakdowns as $bdval) { 													
+												foreach ($breakdowns as $bdval) {
 													$totalPrizes += $bdval['winners'];
 													$resultList .= '<div class="slide-info-body">
 																		<div class="prize-tier">
@@ -273,7 +263,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 																			<p>'.$bdval['winners'].'</p>
 																		</div>
 																		<div class="prize-value">
-																			<p>'.$getCurrencySymbol.$bdval['amount'].'</p>
+																			<p>'.$currencySymbol.$bdval['amount'].'</p>
 																		</div>
 																		<div class="prize-payout">
 																			<p>0</p>
@@ -309,7 +299,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 								</select>
 							</div>
 						<?php } ?>
-						
+
 						<div class="result-accordian-section">
 							<div class="result-table-title">
 								<h3>Results</h3>
@@ -539,7 +529,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 											<span>56</span>
 										</div>
 									</div>
-									<!--<div class="select-no-heading">
+									<div class="select-no-heading">
 										<p>Select 1 Powerball</p>
 									</div>
 									<div class="select-ticket-box-row">
@@ -585,7 +575,7 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 										<div class="select-ticket-box">
 											<span class="yellow-ticket">14</span>
 										</div>
-									</div>-->
+									</div>
 								</div>
 							</div>
 							<div class="check-number-row">
@@ -782,6 +772,8 @@ foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
 		numOfBalls: <?php if( isset( $noOfBalls ) && !empty( $noOfBalls ) ){ echo $noOfBalls; }else{ echo ""; } ?>,
 		maxBallNumber: <?php if( isset( $maxBallNo ) && !empty( $maxBallNo ) ){ echo $maxBallNo; }else{ echo ""; } ?>,
 		minBallNumber: <?php if( isset( $minBallNo ) && !empty( $minBallNo ) ){ echo $minBallNo; }else{ echo ""; } ?>,
+		totalBonusBalls: <?php echo $totalBonusBalls; ?>,
+		maxBonusBalls: <?php echo $maxBonusBalls; ?>,
 	};
 </script>
 <?php include 'footer.php' ?>
