@@ -1,0 +1,15 @@
+{
+	"tabWidth": 4,
+	"semi": false,
+	"singleQuote": false,
+	"useTabs": true,
+	"overrides": [
+		{
+			"files": "*.js",
+			"options": {
+				"trailingComma": "es5",
+				"singleQuote": true
+			}
+		}
+	]
+}

@@ -69,10 +69,7 @@ abstract class BaseAPI {
 
 		if ( array_key_exists('properties', $_checkResp) && null === $_checkResp['properties'] ) {
 			// Auth has expired. Let's reauthenticate.
-			echo '<pre>';
-			print_r('we here');
-			echo '</pre>';
-			$this->_authenticate();
+			$this->token = $this->_authenticate();
 
 			// @todo: fix this. Now redo the curl call.
 			$this->doCurl( $url );
