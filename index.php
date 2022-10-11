@@ -1,9 +1,9 @@
 <?php
-include 'header.php';
-require_once 'api/Products.php';
+include_once 'header.php';
+require_once 'api/ProductSingle.php';
 
-$api = new Products;
-$products = $api->getSingleProductListing();
+$api = new ProductSingle;
+$products = $api->getListing();
 
 ?>
 <section class="baner-section">
