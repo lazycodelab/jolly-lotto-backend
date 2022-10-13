@@ -189,9 +189,6 @@ $(function () {
 
 	totalPriceCalucate()
 
-	//ADD 3 LINES INITIALLY
-	addLine(2)
-
 	//RESULT DISPLAY
 	$(document).on('change', '[data-select-result-month]', function () {
 		var month = $(this).val()

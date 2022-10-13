@@ -30,15 +30,15 @@ $maxBonusBalls = $lottery->bonusBalls[0]->maxNumber;
 //LOTTERY RESULTS
 $startDate = strtok( $details->product->startDate, 'T');
 $lotteryId = $details->product->lotteryId;
-//$lotteryResults = $result->fetchDetails( $lotteryId, $startDate );
+$lotteryResults = $result->fetchDetails( $lotteryId, $startDate );
 
-//$sortedResult = [];
-//foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
-//	$drawDate = $v['drawDate'];
-//	$date = date_create($drawDate);
-//	$date = date_format($date,"M Y");
-//	$sortedResult[$date][] = $v;
-//}
+$sortedResult = [];
+foreach ( $lotteryResults['lotteryResultsList'] as $k => $v ) {
+	$drawDate = $v['drawDate'];
+	$date = date_create($drawDate);
+	$date = date_format($date,"M Y");
+	$sortedResult[$date][] = $v;
+}
 
 ?>
 <section class="jlotto-product-page oz-product-bg">
@@ -73,6 +73,7 @@ $lotteryId = $details->product->lotteryId;
 				<!-- <li><a href="#tab2">Syndicate Play</a></li>
 				<li><a href="#tab3">Bundle Play</a></li> -->
 				<li><a href="#tab4">Results</a></li>
+				<!--<li><a href="/results.php?lotteryID=<?php echo $lotteryId; ?>&date=<?php echo $startDate; ?>">Results</a></li>-->
 			</ul>
 			<div class="pro-tab-detail tab-content active" id="tab1">
 				<div class="pro-tab-info-iner">
@@ -205,7 +206,9 @@ $lotteryId = $details->product->lotteryId;
 							<h3>French Lotto Results</h3>
 							<p>Small paragraph to help with SEO and Marketing details. <br>Lorem ipsum dolor sir amet...</p>
 						</div>
-						<?php  if ( !empty( $sortedResult ) ) {
+						<?php
+						$selected = false;
+						if ( !empty( $sortedResult ) ) {
 							$monthYear = $resultList = '';
 							$i = 1;
 							foreach ( $sortedResult as $month => $lottoResult ) {
@@ -775,5 +778,8 @@ $lotteryId = $details->product->lotteryId;
 		totalBonusBalls: <?php echo $totalBonusBalls; ?>,
 		maxBonusBalls: <?php echo $maxBonusBalls; ?>,
 	};
+</script>
+<script>
+	document.addEventListener( 'DOMContentLoaded', () => addLine(2))
 </script>
 <?php include 'footer.php' ?>

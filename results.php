@@ -1,16 +1,17 @@
-<?php 
+<?php
 /*ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);*/
 
 include 'header.php';
-require_once 'api/SingleAllResults.php';
+require_once 'api/SingleResult.php';
 
-$api = new SingleAllResults;
-$details = $api->fetchDetails();
-echo "<pre>";
-	print_r( $details );
-echo "</pre>";
+$lotteryID = $_GET['lotteryID'];
+$date = $_GET['date'];
+
+$result = new SingleResult;
+$details = $result->fetchDetails( $lotteryID, $date );
+
 ?>
 <section class="contactUs-page lottery-result-page">
 	<div class="jlotto-container">
