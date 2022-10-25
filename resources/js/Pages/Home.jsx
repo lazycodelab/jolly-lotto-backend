@@ -53,6 +53,33 @@ const qualityData = [
 ]
 
 export default function Home(props) {
+	const HeroSlider = () => (
+		<Swiper slidesPerView={1}>
+			<SwiperSlide className="bg-sky-200">
+				<div className="flex items-center justify-between max-w-6xl mx-auto">
+					<img src="/images/banner-man-1.png" />
+					<div>
+						<h2>Header Lorem Ipsum</h2>
+						<p>Support Lorem Ipsum</p>
+						<h2 className="text-7xl">$100 MILLION</h2>
+						<a href="#">Play Now</a>
+					</div>
+				</div>
+			</SwiperSlide>
+			<SwiperSlide className="bg-sky-200">
+				<div className="flex items-center justify-between max-w-6xl mx-auto">
+					<img src="/images/banner-man-1.png" />
+					<div>
+						<h2>Header Lorem Ipsum</h2>
+						<p>Support Lorem Ipsum</p>
+						<h2 className="text-7xl">$100 MILLION</h2>
+						<a href="#">Play Now</a>
+					</div>
+				</div>
+			</SwiperSlide>
+		</Swiper>
+	)
+
 	const SwiperElm = () => {
 		return (
 			<Swiper
@@ -110,7 +137,9 @@ export default function Home(props) {
 		<>
 			<Head title="Home" />
 			{/* Hero section */}
-			<section>{/* slider here */}</section>
+			<section>
+				<HeroSlider />
+			</section>
 
 			{/* Products section */}
 			<section className="py-12">
@@ -128,7 +157,7 @@ export default function Home(props) {
 
 			<section className="bg-orange-50 py-14">
 				<div className="container mx-auto max-w-6xl">
-					<div className="flex justify-between">
+					<div className="flex justify-between gap-10">
 						{sectionData.map((data, idx) => (
 							<SectionCard key={idx} data={data} />
 						))}
