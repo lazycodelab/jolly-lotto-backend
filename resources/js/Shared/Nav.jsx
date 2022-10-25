@@ -37,11 +37,17 @@ export default function Nav() {
 	}
 
 	return (
-		<nav className="space-x-10 text-sm">
-			<NavLink href="/designer">Lotteries</NavLink>
-			<NavLink href="/about">Promotions</NavLink>
-			<NavLink href="/contact">Lottery Results</NavLink>
-			<NavLink href="/contact">Contact Us</NavLink>
-		</nav>
+		<div className="flex justify-between items-center">
+			<nav className="space-x-10 text-sm">
+				<NavLink href="/designer">Lotteries</NavLink>
+				<NavLink href="/about">Promotions</NavLink>
+				<NavLink href="/contact">Lottery Results</NavLink>
+				<NavLink href="/contact">Contact Us</NavLink>
+			</nav>
+			<div>
+				<a href="#">ContactIcon</a>
+				<a href="#">EmailIcon</a>
+			</div>
+		</div>
 	)
 }
