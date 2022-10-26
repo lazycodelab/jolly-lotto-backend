@@ -93,12 +93,15 @@ export default function Home(props) {
 					<h3>
 						<span>Lottery Name</span> <strong>69M</strong>
 					</h3>
-					<button
-						type="button"
+					<Link
+						as="button"
 						className="bg-gradient-to-r from-orange-400 to-orange-500 text-sm text-white rounded-lg py-2 px-8 shadow-orange-700 shadow-md hover:from-orange-500 hover:to-orange-400"
+						href="/lottery"
+						type="button"
 					>
 						Play Now
-					</button>
+					</Link>
+
 					<span>Meta text here</span>
 				</SwiperSlide>
 			</Swiper>
