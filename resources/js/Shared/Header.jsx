@@ -1,4 +1,5 @@
 import Logo from '@/Components/Logo'
+import { Link } from '@inertiajs/inertia-react'
 import Nav from './Nav'
 
 export default () => {
@@ -17,9 +18,9 @@ export default () => {
 	return (
 		<header className="py-2.5 border-b border-b-gray-200 bg-white">
 			<div className="flex items-center container max-w-6xl mx-auto space-x-20">
-				<a href="/" className="w-32 flex-shrink-0">
+				<Link href="/" className="w-32 flex-shrink-0">
 					<Logo />
-				</a>
+				</Link>
 
 				<div className="flex-1">
 					<TopToolbar />
