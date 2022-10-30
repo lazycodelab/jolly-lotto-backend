@@ -29,7 +29,9 @@ Route::get('/lottery', function () {
 	return Inertia::render('Lottery');
 });
 
-Route::get('/products', [ProductController::class, 'index']);
+Route::get('/lotteries', [ProductController::class, 'index']);
+Route::get('/lotteries/{product}', [ProductController::class, 'show']);
+Route::get('/det', [ProductController::class, 'fetchProductsDetails']);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

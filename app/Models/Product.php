@@ -10,4 +10,17 @@ class Product extends Model
     use HasFactory;
 
 	protected $guarded = [];
+
+	public function prices()
+	{
+		return $this->hasMany(Price::class);
+	}
+
+	/**
+	 * Undocumented function
+	 */
+	public function lottery()
+	{
+		return $this->hasOne(Lottery::class);
+	}
 }
