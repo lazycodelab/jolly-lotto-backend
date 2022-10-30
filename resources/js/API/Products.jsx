@@ -7,7 +7,7 @@ export default function Products() {
 	const [products, setProducts] = useState([])
 
 	useEffect(() => {
-		const response = axios.get('/products')
+		const response = axios.get('/lotteries')
 		response.then(({ data }) => {
 			setProducts(data)
 		})

@@ -100,9 +100,8 @@ export default function Home(props) {
 							<strong>{product.price}M</strong>
 						</h3>
 						<Link
-							as="button"
 							className="rounded-lg bg-gradient-to-r from-orange-400 to-orange-500 py-2 px-8 text-sm text-white shadow-md shadow-orange-700 hover:from-orange-500 hover:to-orange-400"
-							href="/lottery"
+							href={`/lotteries/${product.id}`}
 							type="button"
 						>
 							Play Now
