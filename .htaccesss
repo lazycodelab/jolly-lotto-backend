@@ -1,2 +1,0 @@
-RewriteEngine on
-RewriteRule ^lotteries/([-\w]+)$ lotteries.php?id=$1 [NC,L]
