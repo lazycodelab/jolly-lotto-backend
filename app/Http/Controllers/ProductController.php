@@ -96,6 +96,8 @@ class ProductController extends Controller
 	 */
 	public function show(Product $product)
 	{
+
+		return $product;
 		//$f = $product->prices()->select('price')->where('currencyCode', $product->currencyCode)->first();
 
 		return inertia('LotteryDetails', [
