@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class LotteryController extends Controller
 {
-	public function bulkStore(array $item)
+	public function bulkStore(int $productID, array $item)
 	{
 			$balls = [
 				'total' => $item['numOfBalls'],
@@ -25,7 +25,7 @@ class LotteryController extends Controller
 			}
 
 			Lottery::create([
-				'product_id' => 1,
+				'product_id' => $productID,
 				'country_code' => $item['countryCode'],
 				'currency_code' => $item['currencyCode'],
 				'cut_offs' => $item['cutOffs'],

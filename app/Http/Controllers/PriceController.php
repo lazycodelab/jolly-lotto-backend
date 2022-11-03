@@ -12,11 +12,11 @@ class PriceController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function bulkStore( array $prices )
+	public function bulkStore( int $productID, array $prices )
 	{
 		foreach ($prices as $price) {
 			Price::create([
-				'product_id' => 1,
+				'product_id' => $productID,
 				'currencyCode' => $price['currencyCode'],
 				'price' => $price['price'],
 			]);

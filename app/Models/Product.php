@@ -10,6 +10,7 @@ class Product extends Model
     use HasFactory;
 
 	protected $guarded = [];
+	protected $with = ['lottery'];
 
 	public function prices()
 	{
