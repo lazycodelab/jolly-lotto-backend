@@ -25,7 +25,9 @@ class ProductController extends Controller
 				'clientSecurity' => env('API_SECRET'),
 			]);
 
-			$apiToken = Cache::forever('api_token', $response->body());
+			// store cache for a day.
+			// @todo: maybe fix this logic.
+			$apiToken = Cache::put('api_token', $response->body(), now()->addMinutes(1440));
 		}
 
 		// Fetch all products.
@@ -35,27 +37,23 @@ class ProductController extends Controller
 		$this->bulkStore( $prods->json() );
 	}
 
-	public function fetchProductsDetails()
+	public function fetchDetails(Product $product)
 	{
 		$priceController = new PriceController;
 		$lotteryController = new LotteryController;
 		$apiToken = Cache::get('api_token');
-		$products = Product::all();
 
-		foreach ( $products as $product ) {
-			// maybe use pooling here, loop on all the urls and then make dofferent calls?
-			$endpoint = "/products/LE/{self::TYPES[$product->typeCode]}/details/{$product->productId}";
-			$details = Http::lotto()->withToken($apiToken)->get($endpoint)->json();
+		$endpoint = "/products/LE/{self::TYPES[$product->typeCode]}/details/{$product->productId}";
+		$details = Http::lotto()->withToken($apiToken)->get($endpoint)->json();
 
-			if (isset($details['prices'])) {
-				//$priceController->bulkStore($details['prices']);
-			}
-
-			$lotteryData = $details['lottery'];
-			//dd($lotteryData);
-			$lotteryController->bulkStore($lotteryData);
-			dd($details);
+		if (isset($details['prices'])) {
+			$priceController->bulkStore($product->id, $details['prices']);
 		}
+
+		$lotteryData = $details['lottery'];
+		$lotteryController->bulkStore($product->id, $lotteryData);
+
+		return $details;
 	}
 
 	public function bulkStore($products)
@@ -96,14 +94,20 @@ class ProductController extends Controller
 	 */
 	public function show(Product $product)
 	{
+		$price = $product->prices()->where('currencyCode', 'EUR')->first();
+		// @todo: maybe do this a better way.
+		$product->prices = $price;
 
 		return $product;
-		//$f = $product->prices()->select('price')->where('currencyCode', $product->currencyCode)->first();
+		//return [
+		//	'product' => $product,
+		//	'details' => $product->lottery,
+		//];
+		//return $product::with('lottery')->where('id', $product->id)->get();
 
 		return inertia('LotteryDetails', [
 			'product' => $product,
-			'lottery' => $product->lottery,
-			//'balls' => $product->lottery()->select('balls')->first()->balls,
+			//'balls' => $product->lottery,
 			//'cutOffs' => $product->lottery()->select('cut_offs')->first()->cut_offs,
 		]);
 	}
