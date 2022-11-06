@@ -24,14 +24,17 @@ class LotteryController extends Controller
 				}
 			}
 
-			Lottery::create([
-				'product_id' => $productID,
-				'country_code' => $item['countryCode'],
-				'currency_code' => $item['currencyCode'],
-				'cut_offs' => $item['cutOffs'],
-				'draw_dates' => $item['drawDays'],
-				'balls' => $balls,
-			]);
+			Lottery::updateOrCreate(
+				['product_id' => $productID],
+				[
+					'start_date' => $item['start_date'],
+					'country_code' => $item['countryCode'],
+					'currency_code' => $item['currencyCode'],
+					'cut_offs' => $item['cutOffs'],
+					'draw_dates' => $item['drawDays'],
+					'balls' => $balls,
+				]
+			);
 	}
 
 	/**
@@ -99,14 +102,8 @@ class LotteryController extends Controller
 		//
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy($id)
+	public function results(Lottery $lottery)
 	{
-		//
+		return $lottery->results;
 	}
 }

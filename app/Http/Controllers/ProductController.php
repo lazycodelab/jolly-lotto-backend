@@ -27,7 +27,8 @@ class ProductController extends Controller
 
 			// store cache for a day.
 			// @todo: maybe fix this logic.
-			$apiToken = Cache::put('api_token', $response->body(), now()->addMinutes(1440));
+			Cache::put('api_token', $response->body(), now()->addMinutes(1440));
+			$apiToken = $response->body();
 		}
 
 		// Fetch all products.
@@ -50,6 +51,7 @@ class ProductController extends Controller
 			$priceController->bulkStore($product->id, $details['prices']);
 		}
 
+		$details['lottery']['start_date'] = $details['product']['startDate'];
 		$lotteryData = $details['lottery'];
 		$lotteryController->bulkStore($product->id, $lotteryData);
 

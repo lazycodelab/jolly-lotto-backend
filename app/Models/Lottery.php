@@ -20,4 +20,10 @@ class Lottery extends Model
 	{
 		return $this->belongsTo(Product::class);
 	}
+
+
+	public function results()
+	{
+		return $this->hasMany(Result::class);
+	}
 }
