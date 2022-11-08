@@ -101,16 +101,5 @@ class ProductController extends Controller
 		$product->prices = $price;
 
 		return $product;
-		//return [
-		//	'product' => $product,
-		//	'details' => $product->lottery,
-		//];
-		//return $product::with('lottery')->where('id', $product->id)->get();
-
-		return inertia('LotteryDetails', [
-			'product' => $product,
-			//'balls' => $product->lottery,
-			//'cutOffs' => $product->lottery()->select('cut_offs')->first()->cut_offs,
-		]);
 	}
 }
