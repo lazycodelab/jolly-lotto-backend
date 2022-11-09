@@ -28,17 +28,21 @@ class ResultController extends Controller
 		return ["emptyResponse" => true];
 	}
 
-	public function bulkStore(array $results)
+	public function bulkStore(int $lotteryID, array $results)
 	{
 		foreach( $results as $result ) {
-			Result::create([
-				'lottery_id' => 1,
-				'draw_date' => $result['drawDate'],
-				'jackpot' => $result['jackpot'] ?? 0,
-				'winners' => $result['winners'] ?? 0,
-				'board' => $result['board'] ?? '-',
-				'breakdowns' => $result['breakdowns'],
-			]);
+			Result::updateOrCreate(
+				[
+					'lottery_id' => $lotteryID,
+					'jackpot' => $result['jackpot'],
+				],
+				[
+					'draw_date' => $result['drawDate'],
+					'winners' => $result['winners'],
+					'board' => $result['board'],
+					'breakdowns' => $result['breakdowns']
+				]
+			);
 		}
 	}
 }

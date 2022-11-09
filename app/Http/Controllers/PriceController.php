@@ -15,11 +15,15 @@ class PriceController extends Controller
 	public function bulkStore( int $productID, array $prices )
 	{
 		foreach ($prices as $price) {
-			Price::create([
-				'product_id' => $productID,
-				'currencyCode' => $price['currencyCode'],
-				'price' => $price['price'],
-			]);
+			Price::updateOrCreate(
+				[
+					'product_id' => $productID,
+					'currencyCode' => $price['currencyCode']
+				],
+				[
+					'price' => $price['price'],
+				]
+			);
 		}
 	}
 

@@ -17,9 +17,9 @@ return new class extends Migration
 			$table->id();
 			$table->foreignId('lottery_id');
 			$table->dateTime('draw_date');
-			$table->string('jackpot');
-			$table->integer('winners');
-			$table->string('board');
+			$table->string('jackpot')->default(0);
+			$table->integer('winners')->default(0);
+			$table->string('board')->nullable();
 			$table->json('breakdowns');
 			$table->timestamps();
 		});

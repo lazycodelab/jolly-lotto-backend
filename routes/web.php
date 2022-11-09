@@ -20,7 +20,10 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
+// Temp routes.
+Route::get('/fetchDet', [ProductController::class, 'binChilling']);
 Route::get('/lotteries/fetch', [ProductController::class, 'fetch']);
+
 Route::get('/lotteries/{product}/fetchDetails', [ProductController::class, 'fetchDetails']);
 Route::get('/lotteries/{lottery}/fetchResults', [ResultController::class, 'fetchResults']);
 
