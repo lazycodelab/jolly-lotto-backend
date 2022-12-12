@@ -45,16 +45,18 @@ class ProductController extends Controller
 	public function bulkStore($products)
 	{
 		foreach( $products as $product ) {
-			Product::create([
-				'productId' => $product['id'],
-				'name' => $product['name'],
-				'price' => $product['price'],
-				'type' => $product['typeCode'],
-				'lotteryId' => $product['lotteryId'],
-				'lotteryName' => $product['lotteryName'],
-				'currencyCode' => $product['currencyCode'],
-				'description' => $product['descriptor'],
-			]);
+			Product::updateOrCreate(
+				['productId' => $product['id']],
+				[
+					'name' => $product['name'],
+					'price' => $product['price'],
+					'type' => $product['typeCode'],
+					'lotteryId' => $product['lotteryId'],
+					'lotteryName' => $product['lotteryName'],
+					'currencyCode' => $product['currencyCode'],
+					'description' => $product['descriptor'],
+				]
+			);
 		}
 	}
 
