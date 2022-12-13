@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Http;
 class ProductController extends Controller
 {
 	const TYPES = [
-		1 => 'Simple Product',
-		5 => 'Syndicate'
+		1 => 'single',
+		5 => 'syndicate'
 	];
 
 	public function fetch()
@@ -27,8 +27,9 @@ class ProductController extends Controller
 	{
 		$priceController = new PriceController;
 		$lotteryController = new LotteryController;
+		$syndicateController = new SyndicateController;
 
-		$endpoint = "/products/LE/{self::TYPES[$product->typeCode]}/details/{$product->productId}";
+		$endpoint = "/products/LE/" . self::TYPES[$product->type] . "/details/{$product->productId}";
 		$details = Http::lotto()->get($endpoint)->json();
 
 		if (isset($details['prices'])) {
@@ -38,6 +39,12 @@ class ProductController extends Controller
 		$details['lottery']['start_date'] = $details['product']['startDate'];
 		$lotteryData = $details['lottery'];
 		$lotteryController->bulkStore($product->id, $lotteryData);
+
+		// Add data for syndicate products.
+		if ( isset( $details['syndicateGroups'] ) ) {
+			$syndicateData = $details['syndicateGroups'];
+			$syndicateController->bulkStore($product->id, $details['product']['isSuperDraw'], $syndicateData);
+		}
 
 		return $details;
 	}
@@ -124,7 +131,7 @@ class ProductController extends Controller
 	 */
 	public function update(Product $product)
 	{
-		$endpoint = "/products/LE/{self::TYPES[$product->typeCode]}/details/{$product->productId}";
+		$endpoint = "/products/LE/" . self::TYPES[$product->type] . "/details/{$product->productId}";
 		$response = Http::lotto()->get($endpoint)->json();
 		$prices = [];
 		$lottery = [];

@@ -14,6 +14,7 @@ class Lottery extends Model
 		'cut_offs' => 'array',
 		'draw_dates' => 'array',
 		'balls' => 'array',
+		'syndicate_data' => 'array',
 	];
 
 	public function product()
