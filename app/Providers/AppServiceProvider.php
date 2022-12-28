@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
 						'verify' => false,
 					]
 				)->post(
-					'http://gateway.cloudandahalf.com/crow/api/auth/token',
+					'https://gateway.cloudandahalf.com/crow/api/auth/token',
 					[
 						'clientId' => env('API_KEY'),
 						'clientSecurity' => env('API_SECRET'),
@@ -49,11 +49,12 @@ class AppServiceProvider extends ServiceProvider
 				$apiToken = $token->body();
 			}
 
-			return Http::withOptions([
-				'verify' => false,
-			])
-			->baseUrl('https://gateway.cloudandahalf.com/crow/api')
-			->withToken($apiToken);
+			return Http::withoutVerifying()
+					->withOptions([
+						'verify' => false,
+					])
+					->baseUrl('https://gateway.cloudandahalf.com/crow/api')
+					->withToken($apiToken);
 		});
 	}
 }
