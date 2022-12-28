@@ -22,6 +22,7 @@ Route::get('/', function () {
 
 // Temp routes.
 Route::get('/fetchDet', [ProductController::class, 'binChilling']);
+Route::get('/fetchResults', [ProductController::class, 'binChillingResults']);
 Route::get('/lotteries/fetch', [ProductController::class, 'fetch']);
 
 Route::get('/lotteries/{product}/fetchDetails', [ProductController::class, 'fetchDetails']);
