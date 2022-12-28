@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
 						'verify' => false,
 					]
 				)->post(
-					'https://gateway.cloudandahalf.com/crow/api/auth/token',
+					'http://gateway.cloudandahalf.com/crow/api/auth/token',
 					[
 						'clientId' => env('API_KEY'),
 						'clientSecurity' => env('API_SECRET'),
