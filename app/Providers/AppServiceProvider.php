@@ -30,7 +30,8 @@ class AppServiceProvider extends ServiceProvider
 			$apiToken = Cache::get('api_token');
 
 			if (null === $apiToken) {
-				$token = Http::withOptions(
+				$token = Http::withoutVerifying()
+				->withOptions(
 					[
 						'verify' => false,
 					]
