@@ -14,10 +14,17 @@ class Lottery extends Model
 		'cut_offs' => 'array',
 		'draw_dates' => 'array',
 		'balls' => 'array',
+		'syndicate_data' => 'array',
 	];
 
 	public function product()
 	{
 		return $this->belongsTo(Product::class);
+	}
+
+
+	public function results()
+	{
+		return $this->hasMany(Result::class);
 	}
 }

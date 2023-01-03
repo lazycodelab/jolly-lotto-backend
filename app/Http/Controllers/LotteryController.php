@@ -24,34 +24,17 @@ class LotteryController extends Controller
 				}
 			}
 
-			Lottery::create([
-				'product_id' => $productID,
-				'country_code' => $item['countryCode'],
-				'currency_code' => $item['currencyCode'],
-				'cut_offs' => $item['cutOffs'],
-				'draw_dates' => $item['drawDays'],
-				'balls' => $balls,
-			]);
-	}
-
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function index()
-	{
-		//
-	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function create()
-	{
-		//
+			Lottery::updateOrCreate(
+				['product_id' => $productID],
+				[
+					'start_date' => $item['start_date'],
+					'country_code' => $item['countryCode'],
+					'currency_code' => $item['currencyCode'],
+					'cut_offs' => $item['cutOffs'],
+					'draw_dates' => $item['drawDays'],
+					'balls' => $balls,
+				]
+			);
 	}
 
 	/**
@@ -77,17 +60,6 @@ class LotteryController extends Controller
 	}
 
 	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-	/**
 	 * Update the specified resource in storage.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
@@ -99,14 +71,8 @@ class LotteryController extends Controller
 		//
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy($id)
+	public function results(Lottery $lottery)
 	{
-		//
+		return $lottery->results;
 	}
 }
