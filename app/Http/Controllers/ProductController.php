@@ -17,7 +17,7 @@ class ProductController extends Controller
 	public function fetch()
 	{
 		// Fetch all products.
-		$prods = Http::lotto()->get('/allproducts/LE');
+		$prods = Http::lotto()->get('/allproducts/JL');
 
 		// @todo: maybe apply a check to make sure response is not empty.
 		$this->bulkStore( $prods->json() );
@@ -29,7 +29,7 @@ class ProductController extends Controller
 		$lotteryController = new LotteryController;
 		$syndicateController = new SyndicateController;
 
-		$endpoint = "/products/LE/" . self::TYPES[$product->type] . "/details/{$product->productId}";
+		$endpoint = "/products/JL/" . self::TYPES[$product->type] . "/details/{$product->productId}";
 		$details = Http::lotto()->get($endpoint)->json();
 
 		if (isset($details['prices'])) {
@@ -131,7 +131,7 @@ class ProductController extends Controller
 	 */
 	public function update(Product $product)
 	{
-		$endpoint = "/products/LE/" . self::TYPES[$product->type] . "/details/{$product->productId}";
+		$endpoint = "/products/JL/" . self::TYPES[$product->type] . "/details/{$product->productId}";
 		$response = Http::lotto()->get($endpoint)->json();
 		$prices = [];
 		$lottery = [];
