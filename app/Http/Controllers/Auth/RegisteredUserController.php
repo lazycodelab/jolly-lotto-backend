@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rules;
 
 class RegisteredUserController extends Controller
@@ -23,21 +24,29 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'firstName' => ['required', 'string', 'max:255'],
+            'lastName' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            //'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required'],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+		$response = Http::lotto()->post('/auth/register', [
+			'firstName' => $request->firstName,
+			'lastName' => $request->lastName,
+			'email' => $request->email,
+			'password' => $request->password,
+			'confirmPassword' => $request->confirmPassword,
+			'minimumLegalAge' => 18,
+			'birthDate' => $request->birthDate,
+			'billingAddress' => $request->billingAddress,
+		]);
 
-        event(new Registered($user));
+        //event(new Registered($user));
 
-        Auth::login($user);
+        //Auth::login($user);
 
-        return response()->noContent();
+		return $response;
+        //return response()->noContent();
     }
 }

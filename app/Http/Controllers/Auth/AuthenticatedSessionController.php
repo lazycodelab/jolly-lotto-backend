@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -15,12 +16,18 @@ class AuthenticatedSessionController extends Controller
      * @param  \App\Http\Requests\Auth\LoginRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(LoginRequest $request)
+    //public function store(LoginRequest $request)
+    public function store(Request $request)
     {
-        $request->authenticate();
+		//dd($request);
+		$response = Http::lotto()->post('/auth/signin', [
+			'email' => $request->email,
+			'password' => $request->password
+		]);
+        //$request->authenticate();
 
-        $request->session()->regenerate();
-
+        //$request->session()->regenerate();
+		return $response;
         return response()->noContent();
     }
 
