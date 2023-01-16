@@ -16,18 +16,13 @@ class AuthenticatedSessionController extends Controller
      * @param  \App\Http\Requests\Auth\LoginRequest  $request
      * @return \Illuminate\Http\Response
      */
-    //public function store(LoginRequest $request)
-    public function store(Request $request)
+    public function store(LoginRequest $request)
     {
-		//dd($request);
-		$response = Http::lotto()->post('/auth/signin', [
-			'email' => $request->email,
-			'password' => $request->password
-		]);
-        //$request->authenticate();
+		$request->authenticate();
 
-        //$request->session()->regenerate();
-		return $response;
+        $request->session()->regenerate();
+
+		//return response()->json(session('user'));
         return response()->noContent();
     }
 
