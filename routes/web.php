@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return [
-		'Laravel' => app()->version(),
+		'Version' => app()->version(),
 		'Environment' => app()->environment(),
 	];
 });

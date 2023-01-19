@@ -53,9 +53,15 @@ class LoginRequest extends FormRequest
 
 		$user = $response->json();
 
-		session(['user' => $user]);
+		if ( $user['statusCode'] === 200) {
+			session(['user' => $user]);
 
-        RateLimiter::clear($this->throttleKey());
+			RateLimiter::clear($this->throttleKey());
+		} else {
+			throw ValidationException::withMessages([
+				'email' => trans($user['message']),
+			]);
+		}
     }
 
     /**

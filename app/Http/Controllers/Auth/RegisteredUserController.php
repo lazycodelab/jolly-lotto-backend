@@ -3,13 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Validation\Rules;
+use App\Http\Requests\Auth\RegisterRequest;
 
 class RegisteredUserController extends Controller
 {
@@ -21,32 +15,12 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(RegisterRequest $request)
     {
-        $request->validate([
-            'firstName' => ['required', 'string', 'max:255'],
-            'lastName' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            //'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'password' => ['required'],
-        ]);
+		$request->authenticate();
 
-		$response = Http::lotto()->post('/auth/register', [
-			'firstName' => $request->firstName,
-			'lastName' => $request->lastName,
-			'email' => $request->email,
-			'password' => $request->password,
-			'confirmPassword' => $request->confirmPassword,
-			'minimumLegalAge' => 18,
-			'birthDate' => $request->birthDate,
-			'billingAddress' => $request->billingAddress,
-		]);
+        $request->session()->regenerate();
 
-        //event(new Registered($user));
-
-        //Auth::login($user);
-
-		return $response;
-        //return response()->noContent();
+        return response()->json(['success' => true]);
     }
 }
