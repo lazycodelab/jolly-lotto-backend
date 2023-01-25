@@ -101,6 +101,22 @@ class RegisterRequest extends FormRequest
 					'email' => trans($user['message']),
 				]);
 			}
+
+			// Login the user.
+			$loginReq = Http::lotto()->post('/auth/signin', [
+				'email' => $this->email,
+				'password' => $this->password
+			]);
+
+			$loggedInUser = $loginReq->json();
+
+			if ( $loggedInUser['statusCode'] === 200) {
+				session(['user' => $loggedInUser]);
+			} else {
+				throw ValidationException::withMessages([
+					'email' => trans($loggedInUser['message']),
+				]);
+			}
 		} else {
 			throw ValidationException::withMessages([
 				'email' => trans('No response from server.', $response->status()),

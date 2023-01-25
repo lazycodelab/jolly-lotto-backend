@@ -21,6 +21,6 @@ class RegisteredUserController extends Controller
 
         $request->session()->regenerate();
 
-        return response()->json(['success' => true]);
+		return response()->noContent();
     }
 }
