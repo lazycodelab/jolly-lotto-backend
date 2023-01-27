@@ -88,7 +88,7 @@ class RegisterRequest extends FormRequest
 			// Check if the response is still 404.
 			if ($response->status() === 404) {
 				throw ValidationException::withMessages([
-					'email' => trans('No response from server.', $response->status()),
+					'email' => trans('No response from server. - ' . $response->status()),
 				]);
 			}
 		}
@@ -119,7 +119,7 @@ class RegisterRequest extends FormRequest
 			}
 		} else {
 			throw ValidationException::withMessages([
-				'email' => trans('No response from server.', $response->status()),
+				'email' => trans('No response from server. - ' . $response->status()),
 			]);
 		}
     }
