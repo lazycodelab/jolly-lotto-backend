@@ -32,6 +32,7 @@ class RegisterRequest extends FormRequest
             'firstName' => ['required', 'string', 'max:255'],
             'lastName' => ['required', 'string', 'max:255'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+			'minimumLegalAge' => ['required', 'integer', 'gte:18'],
         ];
     }
 
