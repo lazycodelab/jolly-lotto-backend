@@ -31,17 +31,17 @@ class AppServiceProvider extends ServiceProvider
 
 			if (null === $apiToken) {
 				$token = Http::withoutVerifying()
-				->withOptions(
-					[
-						'verify' => false,
-					]
-				)->post(
-					'http://gateway.cloudandahalf.com/crow/api/auth/token',
-					[
-						'clientId' => env('API_KEY'),
-						'clientSecurity' => env('API_SECRET'),
-					]
-				);
+							->withOptions(
+								[
+									'verify' => false,
+								]
+							)->post(
+								'http://gateway.cloudandahalf.com/crow/api/auth/token',
+								[
+									'clientId' => env('API_KEY'),
+									'clientSecurity' => env('API_SECRET'),
+								]
+							);
 
 				// store cache for a day.
 				// @todo: maybe fix this logic.
