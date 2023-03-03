@@ -18,10 +18,10 @@ class Kernel extends ConsoleKernel
     {
 		$schedule->call(function() {
 			(new ProductController)->binChilling();
-		})->daily();
+		})->hourly();
 		$schedule->call(function() {
 			(new ProductController)->binChillingResults();
-		})->daily();
+		})->hourly();
     }
 
     /**
