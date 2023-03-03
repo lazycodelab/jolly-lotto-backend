@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Lottery;
 use App\Models\Product;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class ProductController extends Controller
@@ -132,7 +133,32 @@ class ProductController extends Controller
 	public function update(Product $product)
 	{
 		$endpoint = "/products/JL/" . self::TYPES[$product->type] . "/details/{$product->productId}";
-		$response = Http::lotto()->get($endpoint)->json();
+		$response = Http::lotto()->get($endpoint);
+		//->json();
+
+		// @todo Move this logic to a separate file.
+		if ( $response->status() === 404) {
+			// The token has expired.
+			$token = Http::withoutVerifying()
+				->withOptions(
+					[
+						'verify' => false,
+					]
+				)->post(
+					'http://gateway.cloudandahalf.com/crow/api/auth/token',
+					[
+						'clientId' => env('API_KEY'),
+						'clientSecurity' => env('API_SECRET'),
+					]
+				);
+
+			// store cache for a day.
+			// @todo: maybe fix this logic.
+			Cache::put('api_token', $token->body(), now()->addMinutes(1440));
+
+			$response = Http::lotto()->get($endpoint)->json();
+		}
+
 		$prices = [];
 		$lottery = [];
 
@@ -179,10 +205,34 @@ class ProductController extends Controller
 			$date = $carbon->toDateString();
 
 			$endpoint = "/LotteryResults/GetLotteryResultListByLotteryId/{$lotteryID}/{$date}";
-			$results = Http::lotto()->get($endpoint)->json();
+			//$results = Http::lotto()->get($endpoint)->json();
+			$response = Http::lotto()->get($endpoint);
 
-			if ( ! empty($results['lotteryResultsList'])) {
-				return $results['lotteryResultsList'];
+			// @todo Move this logic to a separate file.
+			if ( $response->status() === 404) {
+				// The token has expired.
+				$token = Http::withoutVerifying()
+					->withOptions(
+						[
+							'verify' => false,
+						]
+					)->post(
+						'http://gateway.cloudandahalf.com/crow/api/auth/token',
+						[
+							'clientId' => env('API_KEY'),
+							'clientSecurity' => env('API_SECRET'),
+						]
+					);
+
+				// store cache for a day.
+				// @todo: maybe fix this logic.
+				Cache::put('api_token', $token->body(), now()->addMinutes(1440));
+
+				$response = Http::lotto()->get($endpoint)->json();
+			}
+
+			if ( ! empty($response['lotteryResultsList'])) {
+				return $response['lotteryResultsList'];
 			}
 		}
 	}
