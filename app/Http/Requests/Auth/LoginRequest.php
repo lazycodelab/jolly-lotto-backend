@@ -53,7 +53,7 @@ class LoginRequest extends FormRequest
 		]);
 
 		// @todo Move this logic to a separate file.
-		if ( $response->status() === 404) {
+		if ( $response->status() === 404 ) {
 			// The token has expired.
 			$token = Http::withoutVerifying()
 				->withOptions(
@@ -76,18 +76,26 @@ class LoginRequest extends FormRequest
 				'email' => $this->email,
 				'password' => $this->password
 			]);
-		}
 
-		$user = $response->json();
-
-		if ( $user['statusCode'] === 200) {
-			session(['user' => $user]);
-
-			RateLimiter::clear($this->throttleKey());
+			// Again 404? Edge case.
+			if ( $response->status() === 404 ) {
+				throw ValidationException::withMessages([
+					'email' => trans('This account is not available. Server error.'),
+				]);
+			}
 		} else {
-			throw ValidationException::withMessages([
-				'email' => trans($user['message']),
-			]);
+
+			$user = $response->json();
+
+			if ( $user['statusCode'] === 200) {
+				session(['user' => $user]);
+
+				RateLimiter::clear($this->throttleKey());
+			} else {
+				throw ValidationException::withMessages([
+					'email' => trans($user['message']),
+				]);
+			}
 		}
     }
 
