@@ -10,33 +10,38 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
-                ->middleware('guest')
-                ->name('register');
+	->middleware('guest')
+	->name('register');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-                ->middleware('guest')
-                ->name('login');
+	->middleware('guest')
+	->name('login');
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
-                ->middleware('guest')
-                ->name('password.email');
+	->middleware('guest')
+	->name('password.email');
 
 Route::post('/reset-password', [NewPasswordController::class, 'store'])
-                ->middleware('guest')
-                ->name('password.update');
+	->middleware('guest')
+	->name('password.update');
 
 Route::get('/verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-                ->middleware(['auth', 'signed', 'throttle:6,1'])
-                ->name('verification.verify');
+	->middleware(['auth', 'signed', 'throttle:6,1'])
+	->name('verification.verify');
 
 Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-                ->middleware(['auth', 'throttle:6,1'])
-                ->name('verification.send');
+	->middleware(['auth', 'throttle:6,1'])
+	->name('verification.send');
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-                //->middleware('auth')
-                ->name('logout');
+	//->middleware('auth')
+	->name('logout');
 
 Route::get('/jolly-user', function (Request $request) {
-    return $request->session()->get('user', null);
+	return $request->session()->get('user', null);
 });
+
+
+// Profile update.
+Route::post('/update', [AuthenticatedSessionController::class, 'update'])
+	->name('update');
