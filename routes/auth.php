@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,11 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::get('/jolly-user', function (Request $request) {
 	return $request->session()->get('user', null);
 });
+
+Route::post('/add-funds', [PaymentController::class, 'store']);
+
+Route::get('/payment/gateways', [PaymentController::class, 'index']);
+Route::post('/payment/gateways/new', [PaymentController::class, 'storeGateway']);
 
 
 // Profile update.
