@@ -94,8 +94,7 @@ class AuthenticatedSessionController extends Controller
 			$response = $response->json();
 
 			if ($response['statusCode'] === 200) {
-				$userDetails = Http::lotto()->get('/JL/accounts/' . $request->id . '/details');
-				$userDetails = $userDetails->json();
+				$userDetails = Http::lotto()->get('/JL/accounts/' . $response['result']['userId'] . '/details')->json();
 
 				if ($userDetails && $userDetails['isSuccess'] === true) {
 					$user     = session()->get('user', []);

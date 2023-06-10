@@ -77,9 +77,6 @@ class LoginRequest extends FormRequest
 				'password' => $this->password
 			]);
 
-			echo '<pre>';
-			print_r($response->status());
-			echo '</pre>';
 			// Again 404? Edge case.
 			if ($response->status() !== 200) {
 				throw ValidationException::withMessages([
@@ -89,15 +86,10 @@ class LoginRequest extends FormRequest
 		} else {
 			$user = $response->json();
 
-			echo '<pre>';
-			print_r($user);
-			echo '</pre>';
-
 			if ($user['statusCode'] === 200) {
 				// Now fetch user details.
-				//dd($user);
-
 				$userDetails = Http::lotto()->get('/JL/accounts/' . $user['userId'] . '/details');
+
 				if ($userDetails->status() !== 200) {
 					$token = Http::withoutVerifying()
 						->withOptions(
@@ -127,6 +119,10 @@ class LoginRequest extends FormRequest
 					session(['user' => $userData]);
 
 					RateLimiter::clear($this->throttleKey());
+				} else {
+					throw ValidationException::withMessages([
+						'email' => trans($userDetails['error']),
+					]);
 				}
 			} else {
 				throw ValidationException::withMessages([
