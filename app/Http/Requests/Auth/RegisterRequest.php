@@ -57,7 +57,7 @@ class RegisterRequest extends FormRequest
 			'sitecode'        => 'LE',
 		]);
 
-		if ($response->status() === 404) {
+		if ($response->status() !== 200) {
 			// The token has expired.
 			$token = Http::withoutVerifying()
 				->withOptions(
@@ -106,20 +106,8 @@ class RegisterRequest extends FormRequest
 			}
 
 			// Login the user.
-			$loginReq = Http::lotto()->post('/auth/signin', [
-				'email'    => $this->email,
-				'password' => $this->password
-			]);
-
-			$loggedInUser = $loginReq->json();
-
-			if ($loggedInUser['statusCode'] === 200) {
-				session(['user' => $loggedInUser]);
-			} else {
-				throw ValidationException::withMessages([
-					'email' => trans($loggedInUser['message']),
-				]);
-			}
+			$login = new LoginRequest();
+			$login->login($this->email, $this->password);
 		} else {
 			throw ValidationException::withMessages([
 				'email' => trans('No response from server. - ' . $response->status()),

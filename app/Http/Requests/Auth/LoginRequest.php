@@ -47,9 +47,15 @@ class LoginRequest extends FormRequest
 	{
 		$this->ensureIsNotRateLimited();
 
+		$this->login($this->email, $this->password);
+
+	}
+
+	public function login($email, $password)
+	{
 		$response = Http::lotto()->post('/auth/signin', [
-			'email'    => $this->email,
-			'password' => $this->password
+			'email'    => $email,
+			'password' => $password
 		]);
 
 		// @todo Move this logic to a separate file.
@@ -73,8 +79,8 @@ class LoginRequest extends FormRequest
 			Cache::put('api_token', $token->body(), now()->addMinutes(1440));
 
 			$response = Http::lotto()->post('/auth/signin', [
-				'email'    => $this->email,
-				'password' => $this->password
+				'email'    => $email,
+				'password' => $password
 			]);
 
 			// Again 404? Edge case.
