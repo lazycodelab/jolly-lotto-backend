@@ -11,16 +11,16 @@ class ResultController extends Controller
 {
 	public function bulkStore(int $lotteryID, array $results)
 	{
-		foreach( $results as $result ) {
+		foreach ($results as $result) {
 			Result::updateOrCreate(
 				[
 					'lottery_id' => $lotteryID,
-					'jackpot' => $result['jackpot'],
+					'jackpot'    => $result['jackpot'],
 				],
 				[
-					'draw_date' => $result['drawDate'],
-					'winners' => $result['winners'],
-					'board' => $result['board'],
+					'draw_date'  => $result['drawDate'],
+					'winners'    => $result['winners'],
+					'board'      => $result['board'],
 					'breakdowns' => $result['breakdowns']
 				]
 			);

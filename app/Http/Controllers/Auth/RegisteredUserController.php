@@ -7,20 +7,20 @@ use App\Http\Requests\Auth\RegisterRequest;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Handle an incoming registration request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function store(RegisterRequest $request)
-    {
+	/**
+	 * Handle an incoming registration request.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 *
+	 * @throws \Illuminate\Validation\ValidationException
+	 */
+	public function store(RegisterRequest $request)
+	{
 		$request->authenticate();
 
-        $request->session()->regenerate();
+		$request->session()->regenerate();
 
 		return response()->noContent();
-    }
+	}
 }

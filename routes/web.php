@@ -17,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return [
-		'Version' => app()->version(),
+	return [
+		'Version'     => app()->version(),
 		'Environment' => app()->environment(),
 	];
 });
@@ -35,4 +35,4 @@ Route::get('/lotteries', [ProductController::class, 'index']);
 Route::get('/lotteries/{product}', [ProductController::class, 'show']);
 Route::get('/lotteries/{lottery}/results', [LotteryController::class, 'results']);
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
