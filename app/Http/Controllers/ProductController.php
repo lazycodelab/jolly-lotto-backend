@@ -21,28 +21,28 @@ class ProductController extends Controller
 		$prods = Http::lotto()->get('/allproducts/JL');
 
 		// @todo: maybe apply a check to make sure response is not empty.
-		$this->bulkStore( $prods->json() );
+		$this->bulkStore($prods->json());
 	}
 
 	public function fetchDetails(Product $product)
 	{
-		$priceController = new PriceController;
-		$lotteryController = new LotteryController;
+		$priceController     = new PriceController;
+		$lotteryController   = new LotteryController;
 		$syndicateController = new SyndicateController;
 
 		$endpoint = "/products/JL/" . self::TYPES[$product->type] . "/details/{$product->productId}";
-		$details = Http::lotto()->get($endpoint)->json();
+		$details  = Http::lotto()->get($endpoint)->json();
 
 		if (isset($details['prices'])) {
 			$priceController->bulkStore($product->id, $details['prices']);
 		}
 
 		$details['lottery']['start_date'] = $details['product']['startDate'];
-		$lotteryData = $details['lottery'];
+		$lotteryData                      = $details['lottery'];
 		$lotteryController->bulkStore($product->id, $lotteryData);
 
 		// Add data for syndicate products.
-		if ( isset( $details['syndicateGroups'] ) ) {
+		if (isset($details['syndicateGroups'])) {
 			$syndicateData = $details['syndicateGroups'];
 			$syndicateController->bulkStore($product->id, $details['product']['isSuperDraw'], $syndicateData);
 		}
@@ -52,17 +52,17 @@ class ProductController extends Controller
 
 	public function bulkStore($products)
 	{
-		foreach( $products as $product ) {
+		foreach ($products as $product) {
 			Product::updateOrCreate(
 				['productId' => $product['id']],
 				[
-					'name' => $product['name'],
-					'price' => $product['price'],
-					'type' => $product['typeCode'],
-					'lotteryId' => $product['lotteryId'],
-					'lotteryName' => $product['lotteryName'],
+					'name'         => $product['name'],
+					'price'        => $product['price'],
+					'type'         => $product['typeCode'],
+					'lotteryId'    => $product['lotteryId'],
+					'lotteryName'  => $product['lotteryName'],
 					'currencyCode' => $product['currencyCode'],
-					'description' => $product['descriptor'],
+					'description'  => $product['descriptor'],
 				]
 			);
 		}
@@ -106,17 +106,17 @@ class ProductController extends Controller
 	 */
 	public function binChilling()
 	{
-		$priceController = new PriceController;
+		$priceController   = new PriceController;
 		$lotteryController = new LotteryController;
 
 		foreach (Product::all() as $product) {
 			$details = $this->update($product);
 
-			if (!empty($details['prices'])) {
+			if (! empty($details['prices'])) {
 				$priceController->bulkStore($product->id, $details['prices']);
 			}
 
-			if (!empty($details['lottery'])) {
+			if (! empty($details['lottery'])) {
 				$lotteryController->bulkStore($product->id, $details['lottery']);
 			}
 		}
@@ -137,7 +137,7 @@ class ProductController extends Controller
 		//->json();
 
 		// @todo Move this logic to a separate file.
-		if ( $response->status() === 404) {
+		if ($response->status() === 404) {
 			// The token has expired.
 			$token = Http::withoutVerifying()
 				->withOptions(
@@ -147,7 +147,7 @@ class ProductController extends Controller
 				)->post(
 					'http://gateway.cloudandahalf.com/crow/api/auth/token',
 					[
-						'clientId' => env('API_KEY'),
+						'clientId'       => env('API_KEY'),
 						'clientSecurity' => env('API_SECRET'),
 					]
 				);
@@ -159,7 +159,7 @@ class ProductController extends Controller
 			$response = Http::lotto()->get($endpoint)->json();
 		}
 
-		$prices = [];
+		$prices  = [];
 		$lottery = [];
 
 		if (isset($response['product'])) {
@@ -167,12 +167,12 @@ class ProductController extends Controller
 				$prices = $response['prices'];
 			}
 
-			$lottery = $response['lottery'];
+			$lottery               = $response['lottery'];
 			$lottery['start_date'] = $response['product']['startDate'];
 		}
 
 		return [
-			'prices' => $prices,
+			'prices'  => $prices,
 			'lottery' => $lottery,
 		];
 	}
@@ -181,7 +181,7 @@ class ProductController extends Controller
 	{
 		$resultsController = new ResultController;
 
-		foreach(Product::all() as $product) {
+		foreach (Product::all() as $product) {
 			$lottery = $product->lottery;
 
 			if (! is_null($lottery)) {
@@ -202,14 +202,14 @@ class ProductController extends Controller
 
 		if (! is_null($startDate)) {
 			$carbon = new Carbon($startDate);
-			$date = $carbon->toDateString();
+			$date   = $carbon->toDateString();
 
 			$endpoint = "/LotteryResults/GetLotteryResultListByLotteryId/{$lotteryID}/{$date}";
 			//$results = Http::lotto()->get($endpoint)->json();
 			$response = Http::lotto()->get($endpoint);
 
 			// @todo Move this logic to a separate file.
-			if ( $response->status() === 404) {
+			if ($response->status() === 404) {
 				// The token has expired.
 				$token = Http::withoutVerifying()
 					->withOptions(
@@ -219,7 +219,7 @@ class ProductController extends Controller
 					)->post(
 						'http://gateway.cloudandahalf.com/crow/api/auth/token',
 						[
-							'clientId' => env('API_KEY'),
+							'clientId'       => env('API_KEY'),
 							'clientSecurity' => env('API_SECRET'),
 						]
 					);
@@ -231,7 +231,7 @@ class ProductController extends Controller
 				$response = Http::lotto()->get($endpoint)->json();
 			}
 
-			if ( ! empty($response['lotteryResultsList'])) {
+			if (! empty($response['lotteryResultsList'])) {
 				return $response['lotteryResultsList'];
 			}
 		}
