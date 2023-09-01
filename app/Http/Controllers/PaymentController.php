@@ -58,14 +58,13 @@ class PaymentController extends Controller
 		$response = Http::lotto()->post('/LE/accounts/' . $userID . '/addfund', [
 			"amount"        => $request->amount,
 			"currencyCode"  => "GBP",
-			"paymentMethod" =>
-			[
-				"cardHolder"        => "Steve Power",
-				"paymentMethodCode" => 1,
-				"cardNumber"        => "4444333322221111",
-				"cvv"               => "021",
-				"expiryMonth"       => "01",
-				"expiryYear"        => "2025"
+			"paymentMethod" => [
+				"cardHolder"        => $request->cardHolder,
+				"paymentMethodCode" => $request->paymentMethodCode,
+				"cardNumber"        => $request->cardNumber,
+				"cvv"             	=> $request->cardCVV,
+				"expiryMonth"       => $request->expiryMonth,
+				"expiryYear"        => $request->expiryYear
 			]
 		]
 		);
@@ -93,14 +92,13 @@ class PaymentController extends Controller
 			$response = Http::lotto()->post('/LE/accounts/' . $userID . '/addfund', [
 				"amount"        => $request->amount,
 				"currencyCode"  => "GBP",
-				"paymentMethod" =>
-				[
-					"cardHolder"        => "Steve Power",
-					"paymentMethodCode" => 1,
-					"cardNumber"        => "4444333322221111",
-					"cvv"               => "021",
-					"expiryMonth"       => "01",
-					"expiryYear"        => "2025"
+				"paymentMethod" => [
+					"cardHolder"        => $request->cardHolder,
+					"paymentMethodCode" => $request->paymentMethodCode,
+					"cardNumber"        => $request->cardNumber,
+					"cvv"               => $request->cardCVV,
+					"expiryMonth"       => $request->expiryMonth,
+					"expiryYear"        => $request->expiryYear
 				]
 			]
 			);
@@ -124,6 +122,7 @@ class PaymentController extends Controller
 	public function storeGateway(Request $request)
 	{
 		//$userID   = session()->get('user.profile.id');
+		// $userID   = $request->id;
 		$userID   = '052199cc-84c3-4e16-3d92-08db198b198f';
 		$response = Http::lotto()->post('/LE/accounts/' . $userID . '/addpaymentmethod', [
 			"paymentMethodCode" => 1,

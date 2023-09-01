@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class VerifyEmailController extends Controller
 {
@@ -35,6 +36,12 @@ class VerifyEmailController extends Controller
 
 	public function validateHash(Request $request)
 	{
-		dd($request->hash);
+		$hash = explode('?p=',$request->hash);
+		$response = Http::lotto()->get("/auth/confirmemailaddress/". $hash[1]);
+		if ($response->status() === 200) {
+			return redirect()->intended(
+				config('app.frontend_url') . RouteServiceProvider::HOME . '?verified=1'
+			);
+		}
 	}
 }
