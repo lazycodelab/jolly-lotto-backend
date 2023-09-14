@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +50,7 @@ Route::post('/add-funds', [PaymentController::class, 'store']);
 Route::get('/payment/gateways', [PaymentController::class, 'index']);
 Route::post('/payment/gateways/new', [PaymentController::class, 'storeGateway']);
 
+Route::post('/lotteries/checkout', [CheckoutController::class, 'storeShoppingCart']);
 
 // Profile update.
 Route::post('/update', [AuthenticatedSessionController::class, 'update'])
