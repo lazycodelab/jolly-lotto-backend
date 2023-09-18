@@ -18,7 +18,7 @@ class PaymentController extends Controller
 	{
 		$userID = session()->get('user.profile.id');
 
-		$response = Http::lotto()->get('/LE/accounts/' . $userID . '/paymentmethods');
+		$response = Http::lotto()->get('/JL/accounts/' . $userID . '/paymentmethods');
 
 		if ($response->status() === 404) {
 			// The token has expired.
@@ -39,7 +39,7 @@ class PaymentController extends Controller
 			// @todo: maybe fix this logic.
 			Cache::put('api_token', $token->body(), now()->addMinutes(1440));
 
-			$response = Http::lotto()->get('/LE/accounts/' . $userID . '/paymentmethods');
+			$response = Http::lotto()->get('/JL/accounts/' . $userID . '/paymentmethods');
 
 			// Again 404? Edge case.
 			if ($response->status() === 404) {
@@ -55,7 +55,7 @@ class PaymentController extends Controller
 	public function store(Request $request)
 	{
 		$userID   = $request->id;
-		$response = Http::lotto()->post('/LE/accounts/' . $userID . '/addfund', [
+		$response = Http::lotto()->post('/JL/accounts/' . $userID . '/addfund', [
 			"amount"        => $request->amount,
 			"currencyCode"  => "GBP",
 			"paymentMethod" => [
@@ -89,7 +89,7 @@ class PaymentController extends Controller
 			// @todo: maybe fix this logic.
 			Cache::put('api_token', $token->body(), now()->addMinutes(1440));
 
-			$response = Http::lotto()->post('/LE/accounts/' . $userID . '/addfund', [
+			$response = Http::lotto()->post('/JL/accounts/' . $userID . '/addfund', [
 				"amount"        => $request->amount,
 				"currencyCode"  => "GBP",
 				"paymentMethod" => [
@@ -124,7 +124,7 @@ class PaymentController extends Controller
 		//$userID   = session()->get('user.profile.id');
 		// $userID   = $request->id;
 		$userID   = '052199cc-84c3-4e16-3d92-08db198b198f';
-		$response = Http::lotto()->post('/LE/accounts/' . $userID . '/addpaymentmethod', [
+		$response = Http::lotto()->post('/JL/accounts/' . $userID . '/addpaymentmethod', [
 			"paymentMethodCode" => 1,
 			"cardHolder"        => $request->cardHolder,
 			"cardNumber"        => $request->cardNumber,
@@ -161,7 +161,7 @@ class PaymentController extends Controller
 			// @todo: maybe fix this logic.
 			Cache::put('api_token', $token->body(), now()->addMinutes(1440));
 
-			$response = Http::lotto()->post('/LE/accounts/' . $userID . '/addpaymentmethod', [
+			$response = Http::lotto()->post('/JL/accounts/' . $userID . '/addpaymentmethod', [
 				"paymentMethodCode" => 1,
 				"cardHolder"        => $request->cardHolder,
 				"cardNumber"        => $request->cardNumber,
