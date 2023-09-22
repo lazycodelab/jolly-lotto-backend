@@ -51,8 +51,31 @@ class LoginRequest extends FormRequest
 
 	}
 
+	private function getAuthToken()
+	{
+		$token = Cache::get('api_token');
+
+		if (!$token) {
+			$tokenResponse = Http::withoutVerifying()->post(
+				'http://gateway.cloudandahalf.com/crow/api/auth/token',
+				[
+					'clientId'       => env('API_KEY'),
+					'clientSecurity' => env('API_SECRET'),
+				]
+			);
+
+			// Store the token in cache for a day
+			Cache::put('api_token', $tokenResponse->body(), now()->addMinutes(1440));
+
+			$token = $tokenResponse->body();
+		}
+
+		return $token;
+	}
+
 	public function login($email, $password)
 	{
+		$this->getAuthToken();
 		$response = Http::lotto()->post('/auth/signin', [
 			'email'    => $email,
 			'password' => $password
