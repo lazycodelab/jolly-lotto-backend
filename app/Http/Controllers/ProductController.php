@@ -194,45 +194,75 @@ class ProductController extends Controller
 		}
 	}
 
+	private function getAuthToken()
+	{
+		$token = Cache::get('api_token');
+
+		if (!$token) {
+			$tokenResponse = Http::withoutVerifying()->post(
+				'http://gateway.cloudandahalf.com/crow/api/auth/token',
+				[
+					'clientId'       => env('API_KEY'),
+					'clientSecurity' => env('API_SECRET'),
+				]
+			);
+
+			// Store the token in cache for a day
+			Cache::put('api_token', $tokenResponse->body(), now()->addMinutes(1440));
+
+			$token = $tokenResponse->body();
+		}
+
+		return $token;
+	}
+
 	public function updateResults(Lottery $lottery, Product $product)
 	{
 		$lotteryID = $product->lotteryId;
 		$startDate = $lottery->start_date;
+		$token = $this->getAuthToken();
 
-
-		if (! is_null($startDate)) {
+		if (!is_null($startDate)) {
 			$carbon = new Carbon($startDate);
-			$date   = $carbon->toDateString();
+			$date = $carbon->toDateString();
 
 			$endpoint = "/LotteryResults/GetLotteryResultListByLotteryId/{$lotteryID}/{$date}";
-			//$results = Http::lotto()->get($endpoint)->json();
 			$response = Http::lotto()->get($endpoint);
 
 			// @todo Move this logic to a separate file.
-			if ($response->status() === 404) {
-				// The token has expired.
-				$token = Http::withoutVerifying()
-					->withOptions(
-						[
-							'verify' => false,
-						]
-					)->post(
-						'http://gateway.cloudandahalf.com/crow/api/auth/token',
-						[
-							'clientId'       => env('API_KEY'),
-							'clientSecurity' => env('API_SECRET'),
-						]
-					);
-
-				// store cache for a day.
-				// @todo: maybe fix this logic.
-				Cache::put('api_token', $token->body(), now()->addMinutes(1440));
-
-				$response = Http::lotto()->get($endpoint)->json();
+			if ($response->status() === 200) {
+				if (!empty($response['lotteryResultsList'])) {
+					return $response['lotteryResultsList'];
+				}
+			} else if ($response->status() === 404) {
+				$token = $this->getAuthToken();
 			}
 
-			if (! empty($response['lotteryResultsList'])) {
-				return $response['lotteryResultsList'];
+		} else {
+			$drawDays = $lottery->draw_dates;
+			$datesArray = [];
+
+			foreach ($drawDays as $drawDay) {
+				$dayOfWeek = $drawDay['dayOfWeek'];
+				$today = Carbon::now();
+				$currentDayOfWeek = $today->dayOfWeek;
+		
+				// Calculate the date of the next draw day in the current week
+				$date = $today->addDays($dayOfWeek - $currentDayOfWeek)->toDateString();
+				array_push($datesArray, $date);
+			}
+
+			foreach ($datesArray as $date) {
+				$endpoint = "/LotteryResults/GetLotteryResultListByLotteryId/{$lotteryID}/{$date}";
+				$response = Http::lotto()->get($endpoint);
+
+				if ($response->status() === 200) {
+					if (!empty($response['lotteryResultsList'])) {
+						return $response['lotteryResultsList'];
+					}
+				} else if ($response->status() === 404) {
+					$token = $this->getAuthToken();
+				}
 			}
 		}
 	}
