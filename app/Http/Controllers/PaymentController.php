@@ -54,7 +54,8 @@ class PaymentController extends Controller
 
 	public function store(Request $request)
 	{
-		$userID   = $request->id;
+		$userID = session()->get('user.profile.id');
+		// $userID   = $request->id;
 		$response = Http::lotto()->post('/JL/accounts/' . $userID . '/addfund', [
 			"amount"        => $request->amount,
 			"currencyCode"  => "GBP",
@@ -116,14 +117,16 @@ class PaymentController extends Controller
 			throw ValidationException::withMessages([
 				'amount' => trans($data['message']),
 			]);
+		} else {
+			return response()->json(['status' => 'success', 'message' => $data['message']] , 200);
 		}
 	}
 
 	public function storeGateway(Request $request)
 	{
-		//$userID   = session()->get('user.profile.id');
+		$userID   = session()->get('user.profile.id');
 		// $userID   = $request->id;
-		$userID   = '052199cc-84c3-4e16-3d92-08db198b198f';
+		// $userID   = '052199cc-84c3-4e16-3d92-08db198b198f';
 		$response = Http::lotto()->post('/JL/accounts/' . $userID . '/addpaymentmethod', [
 			"paymentMethodCode" => 1,
 			"cardHolder"        => $request->cardHolder,
@@ -186,6 +189,9 @@ class PaymentController extends Controller
 			throw ValidationException::withMessages([
 				'method' => trans($data['message']),
 			]);
+		} else {
+			return response()->json(['status' => 'success', 'message' => $data['message']] , 200);
 		}
+
 	}
 }
