@@ -56,7 +56,7 @@ class RegisterRequest extends FormRequest
 			'minimumLegalAge' => 18,
 			'birthDate'       => $this->birthDate,
 			'billingAddress'  => $this->billingAddress,
-			'sitecode'        => 'LE',
+			'sitecode'        => 'JL',
 		]);
 
 		if ($response->status() !== 200) {
