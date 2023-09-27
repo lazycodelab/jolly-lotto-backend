@@ -248,7 +248,9 @@ class ProductController extends Controller
 				$currentDayOfWeek = $today->dayOfWeek;
 		
 				// Calculate the date of the next draw day in the current week
-				$date = $today->addDays($dayOfWeek - $currentDayOfWeek)->toDateString();
+				// $date = $today->addDays($dayOfWeek - $currentDayOfWeek)->toDateString();
+				// $date = "2023-01-01";
+				$date = $today->addMonth(-6)->toDateString();
 				array_push($datesArray, $date);
 			}
 
