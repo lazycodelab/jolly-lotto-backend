@@ -198,18 +198,14 @@ class ProductController extends Controller
 	{
 		$token = Cache::get('api_token');
 
-		if (!$token) {
-			$tokenResponse = Http::withoutVerifying()->post(
-				'http://gateway.cloudandahalf.com/crow/api/auth/token',
-				[
-					'clientId'       => env('API_KEY'),
-					'clientSecurity' => env('API_SECRET'),
-				]
-			);
+		$tokenResponse = Http::withoutVerifying()->post('http://gateway.cloudandahalf.com/crow/api/auth/token',[
+				'clientId'       => env('API_KEY'),
+				'clientSecurity' => env('API_SECRET'),
+			]
+		);
 
-			// Store the token in cache for a day
-			Cache::put('api_token', $tokenResponse->body(), now()->addMinutes(1440));
-
+		if($tokenResponse->body() !== $token) {
+			Cache::put('api_token', $tokenResponse->body(), now()->addMinutes(60));
 			$token = $tokenResponse->body();
 		}
 
@@ -220,7 +216,6 @@ class ProductController extends Controller
 	{
 		$lotteryID = $product->lotteryId;
 		$startDate = $lottery->start_date;
-		$token = $this->getAuthToken();
 
 		if (!is_null($startDate)) {
 			$carbon = new Carbon($startDate);
@@ -234,8 +229,11 @@ class ProductController extends Controller
 				if (!empty($response['lotteryResultsList'])) {
 					return $response['lotteryResultsList'];
 				}
-			} else if ($response->status() === 404) {
-				$token = $this->getAuthToken();
+			} else if ($response->status() === 401 || $response->status() === 403) {
+				$this->getAuthToken();
+				$this->updateResults($lottery, $product);
+			} else {
+				return response()->json(['status' => 'error', 'message' => 'Server Error, Please try again later'] , 200);
 			}
 
 		} else {
@@ -262,8 +260,11 @@ class ProductController extends Controller
 					if (!empty($response['lotteryResultsList'])) {
 						return $response['lotteryResultsList'];
 					}
-				} else if ($response->status() === 404) {
-					$token = $this->getAuthToken();
+				}  else if ($response->status() === 401 || $response->status() === 403) {
+					$this->getAuthToken();
+					$this->updateResults($lottery, $product);
+				} else {
+					return response()->json(['status' => 'error', 'message' => 'Server Error, Please try again later'] , 200);
 				}
 			}
 		}
