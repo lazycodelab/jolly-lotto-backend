@@ -55,18 +55,14 @@ class LoginRequest extends FormRequest
 	{
 		$token = Cache::get('api_token');
 
-		if (!$token) {
-			$tokenResponse = Http::withoutVerifying()->post(
-				'http://gateway.cloudandahalf.com/crow/api/auth/token',
-				[
-					'clientId'       => env('API_KEY'),
-					'clientSecurity' => env('API_SECRET'),
-				]
-			);
+		$tokenResponse = Http::withoutVerifying()->post('http://gateway.cloudandahalf.com/crow/api/auth/token',[
+				'clientId'       => env('API_KEY'),
+				'clientSecurity' => env('API_SECRET'),
+			]
+		);
 
-			// Store the token in cache for a day
-			Cache::put('api_token', $tokenResponse->body(), now()->addMinutes(1440));
-
+		if($tokenResponse->body() !== $token) {
+			Cache::put('api_token', $tokenResponse->body(), now()->addMinutes(60));
 			$token = $tokenResponse->body();
 		}
 
@@ -75,68 +71,25 @@ class LoginRequest extends FormRequest
 
 	public function login($email, $password)
 	{
-		$this->getAuthToken();
 		$response = Http::lotto()->post('/auth/signin', [
 			'email'    => $email,
 			'password' => $password
 		]);
 
 		// @todo Move this logic to a separate file.
-		if ($response->status() !== 200) {
+		if ($response->status() === 401 || $response->status() === 403) {
 			// The token has expired.
-			$token = Http::withoutVerifying()
-				->withOptions(
-					[
-						'verify' => false,
-					]
-				)->post(
-					'http://gateway.cloudandahalf.com/crow/api/auth/token',
-					[
-						'clientId'       => env('API_KEY'),
-						'clientSecurity' => env('API_SECRET'),
-					]
-				);
-
-			// store cache for a day.
-			// @todo: maybe fix this logic.
-			Cache::put('api_token', $token->body(), now()->addMinutes(1440));
-
-			$response = Http::lotto()->post('/auth/signin', [
-				'email'    => $email,
-				'password' => $password
-			]);
-
-			// Again 404? Edge case.
-			if ($response->status() !== 200) {
-				throw ValidationException::withMessages([
-					'email' => trans('This account is not available. Server error.'),
-				]);
-			}
-		} else {
+			$this->getAuthToken();
+			$this->login($email, $password);
+		} else if($response->status() === 200) {
 			$user = $response->json();
 
 			if ($user['statusCode'] === 200) {
 				// Now fetch user details.
 				$userDetails = Http::lotto()->get('/JL/accounts/' . $user['userId'] . '/details');
 
-				if ($userDetails->status() !== 200) {
-					$token = Http::withoutVerifying()
-						->withOptions(
-							[
-								'verify' => false,
-							]
-						)->post(
-							'http://gateway.cloudandahalf.com/crow/api/auth/token',
-							[
-								'clientId'       => env('API_KEY'),
-								'clientSecurity' => env('API_SECRET'),
-							]
-						);
-
-					// store cache for a day.
-					// @todo: maybe fix this logic.
-					Cache::put('api_token', $token->body(), now()->addMinutes(1440));
-
+				if ($userDetails->status() === 401 || $userDetails->status() === 403) {
+					$this->getAuthToken();
 					$userDetails = Http::lotto()->get('/JL/accounts/' . $user['userId'] . '/details');
 				}
 
@@ -158,6 +111,10 @@ class LoginRequest extends FormRequest
 					'email' => trans($user['message']),
 				]);
 			}
+		} else {
+			throw ValidationException::withMessages([
+				'email' => trans('This account is not available. Server error.'),
+			]);
 		}
 	}
 

@@ -34,5 +34,6 @@ Route::get('/lotteries/{lottery}/fetchResults', [ResultController::class, 'fetch
 Route::get('/lotteries', [ProductController::class, 'index']);
 Route::get('/lotteries/{product}', [ProductController::class, 'show']);
 Route::get('/lotteries/{lottery}/results', [LotteryController::class, 'results']);
+Route::get('/user/order-history', [LotteryController::class, 'fetchBetHistory']);
 
 require __DIR__ . '/auth.php';
