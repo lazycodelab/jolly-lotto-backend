@@ -49,6 +49,10 @@ Route::post('/add-funds', [PaymentController::class, 'store']);
 
 Route::get('/payment/gateways', [PaymentController::class, 'index']);
 Route::post('/payment/gateways/new', [PaymentController::class, 'storeGateway']);
+Route::delete('/payment/gateways/{id}', [PaymentController::class, 'deleteGateway']);
+
+Route::get('/user/limit', [PaymentController::class, 'getUserLimit']);
+Route::post('/user/limit/update', [PaymentController::class, 'updateUserLimit']);
 
 Route::post('/lotteries/checkout', [CheckoutController::class, 'storeShoppingCart']);
 
