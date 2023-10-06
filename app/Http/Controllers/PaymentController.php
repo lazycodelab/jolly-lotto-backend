@@ -28,14 +28,17 @@ class PaymentController extends Controller
 				'email' => trans('This account is not available. Server error.'),
 			]);
 		} else {
-			return $response->json();
+			if ($response->status() === 200) {
+				return $response->json();
+			} else {
+				return response()->json(['status' => 'error', 'message' => 'Something went wrong, Please try again later!'] , 200);
+			}
 		}
 	}
 
 	public function store(Request $request)
 	{
 		$userID = session()->get('user.profile.id');
-		// $userID   = $request->id;
 		$response = Http::lotto()->post('/JL/accounts/' . $userID . '/addfund', [
 			"amount"        => $request->amount,
 			"currencyCode"  => "GBP",
@@ -47,58 +50,28 @@ class PaymentController extends Controller
 				"expiryMonth"       => $request->expiryMonth,
 				"expiryYear"        => $request->expiryYear
 			]
-		]
-		);
+		]);
 
-		// @todo Move this logic to a separate file.
-		if ($response->status() === 404) {
-			// The token has expired.
-			$token = Http::withoutVerifying()
-				->withOptions(
-					[
-						'verify' => false,
-					]
-				)->post(
-					'http://gateway.cloudandahalf.com/crow/api/auth/token',
-					[
-						'clientId'       => env('API_KEY'),
-						'clientSecurity' => env('API_SECRET'),
-					]
-				);
-
-			// store cache for a day.
-			// @todo: maybe fix this logic.
-			Cache::put('api_token', $token->body(), now()->addMinutes(1440));
-
-			$response = Http::lotto()->post('/JL/accounts/' . $userID . '/addfund', [
-				"amount"        => $request->amount,
-				"currencyCode"  => "GBP",
-				"paymentMethod" => [
-					"cardHolder"        => $request->cardHolder,
-					"paymentMethodCode" => $request->paymentMethodCode,
-					"cardNumber"        => $request->cardNumber,
-					"cvv"               => $request->cardCVV,
-					"expiryMonth"       => $request->expiryMonth,
-					"expiryYear"        => $request->expiryYear
-				]
-			]
-			);
-
-			// Again 404? Edge case.
-			if ($response->status() === 404) {
-				throw ValidationException::withMessages([
-					'email' => trans('This account is not available. Server error.'),
-				]);
-			}
-		}
-
-		$data = $response->json();
-		if (isset($data['successed']) && $data['successed'] !== true) {
+		if ($response->status() === 401 || $response->status() === 403) {
+			$this->getAuthToken();
+			$this->store($request);
+		} else if($response->status() === 404) {
 			throw ValidationException::withMessages([
-				'amount' => trans($data['message']),
+				'email' => trans('This account is not available. Server error.'),
 			]);
 		} else {
-			return response()->json(['status' => 'success', 'message' => $data['message']] , 200);
+			if ($response->status() === 200) {
+				$data = $response->json();
+				if (isset($data['successed']) && $data['successed'] !== true) {
+					throw ValidationException::withMessages([
+						'amount' => trans($data['message']),
+					]);
+				} else {
+					return response()->json(['status' => 'success', 'message' => $data['message']] , 200);
+				}
+			} else {
+				return response()->json(['status' => 'error', 'message' => 'Something went wrong, Please try again later!'] , 200);
+			}
 		}
 	}
 
@@ -148,18 +121,13 @@ class PaymentController extends Controller
 	private function getAuthToken()
 	{
 		$token = Cache::get('api_token');
-
 		$tokenResponse = Http::withoutVerifying()->post('http://gateway.cloudandahalf.com/crow/api/auth/token',[
 				'clientId'       => env('API_KEY'),
 				'clientSecurity' => env('API_SECRET'),
 			]
 		);
-
-		if($tokenResponse->body() !== $token) {
-			Cache::put('api_token', $tokenResponse->body(), now()->addMinutes(60));
-			$token = $tokenResponse->body();
-		}
-
+		$token = $tokenResponse->body();
+		Cache::put('api_token', $token, now()->addMinutes(60));		
 		return $token;
 	}
 
@@ -211,7 +179,7 @@ class PaymentController extends Controller
 				],
 				[
 					"NewLimitAmount" => $request->depositLimit['limit'],
-					"transactionTypeCode" => 4,
+					"transactionTypeCode" => 0,
 					"durationInDays" => $request->depositLimit['duration'],
 					"startTime" => NULL
 				]

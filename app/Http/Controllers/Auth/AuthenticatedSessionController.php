@@ -73,7 +73,7 @@ class AuthenticatedSessionController extends Controller
 
 			// store cache for a day.
 			// @todo: maybe fix this logic.
-			Cache::put('api_token', $token->body(), now()->addMinutes(1440));
+			Cache::put('api_token', $token->body(), now()->addMinutes(60));
 
 			$response = Http::lotto()->post('/JL/accounts/update', [
 				'id'             => $request->id,

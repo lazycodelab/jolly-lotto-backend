@@ -89,18 +89,13 @@ class RegisterRequest extends FormRequest
 	private function getAuthToken()
 	{
 		$token = Cache::get('api_token');
-
 		$tokenResponse = Http::withoutVerifying()->post('http://gateway.cloudandahalf.com/crow/api/auth/token',[
 				'clientId'       => env('API_KEY'),
 				'clientSecurity' => env('API_SECRET'),
 			]
 		);
-
-		if($tokenResponse->body() !== $token) {
-			Cache::put('api_token', $tokenResponse->body(), now()->addMinutes(60));
-			$token = $tokenResponse->body();
-		}
-
+		$token = $tokenResponse->body();
+		Cache::put('api_token', $token, now()->addMinutes(60));		
 		return $token;
 	}
 }

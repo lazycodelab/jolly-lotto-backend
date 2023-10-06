@@ -154,7 +154,7 @@ class ProductController extends Controller
 
 			// store cache for a day.
 			// @todo: maybe fix this logic.
-			Cache::put('api_token', $token->body(), now()->addMinutes(1440));
+			Cache::put('api_token', $token->body(), now()->addMinutes(60));
 
 			$response = Http::lotto()->get($endpoint)->json();
 		}
@@ -197,18 +197,13 @@ class ProductController extends Controller
 	private function getAuthToken()
 	{
 		$token = Cache::get('api_token');
-
 		$tokenResponse = Http::withoutVerifying()->post('http://gateway.cloudandahalf.com/crow/api/auth/token',[
 				'clientId'       => env('API_KEY'),
 				'clientSecurity' => env('API_SECRET'),
 			]
 		);
-
-		if($tokenResponse->body() !== $token) {
-			Cache::put('api_token', $tokenResponse->body(), now()->addMinutes(60));
-			$token = $tokenResponse->body();
-		}
-
+		$token = $tokenResponse->body();
+		Cache::put('api_token', $token, now()->addMinutes(60));		
 		return $token;
 	}
 
