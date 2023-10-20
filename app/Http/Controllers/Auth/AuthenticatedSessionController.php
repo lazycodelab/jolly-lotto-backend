@@ -35,12 +35,12 @@ class AuthenticatedSessionController extends Controller
 	 */
 	public function destroy(Request $request)
 	{
+		
+		$keysToKeep = ['products']; // Add keys you want to keep here.
+		$allSessionKeys = array_keys($request->session()->all());
+		$keysToRemove = array_diff($allSessionKeys, $keysToKeep);
+		$request->session()->forget($keysToRemove);
 		Auth::guard('web')->logout();
-
-		$request->session()->invalidate();
-
-		$request->session()->regenerateToken();
-
 		return response()->noContent();
 	}
 
