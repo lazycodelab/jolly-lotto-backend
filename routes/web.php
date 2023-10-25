@@ -3,6 +3,7 @@
 use App\Http\Controllers\LotteryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ResultController;
+use App\Http\Controllers\SavedDetailsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,5 +36,8 @@ Route::get('/lotteries', [ProductController::class, 'index']);
 Route::get('/lotteries/{product}', [ProductController::class, 'show']);
 Route::get('/lotteries/{lottery}/results', [LotteryController::class, 'results']);
 Route::get('/user/order-history', [LotteryController::class, 'fetchBetHistory']);
+
+Route::get('/getSavedProductDetails', [SavedDetailsController::class, 'index']);
+Route::post('/saveProductDetails', [SavedDetailsController::class, 'store']);
 
 require __DIR__ . '/auth.php';
