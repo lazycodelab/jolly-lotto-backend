@@ -32,6 +32,7 @@ Route::post('/reset-password', [NewPasswordController::class, 'store'])
 //	->name('verification.verify');
 
 Route::get('/verify-email', [VerifyEmailController::class, 'validateHash']);
+Route::get('/resend-email', [VerifyEmailController::class, 'resendEmail']);
 
 Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
 	->middleware(['auth', 'throttle:6,1'])
