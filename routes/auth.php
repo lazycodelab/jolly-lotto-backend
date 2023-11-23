@@ -45,6 +45,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::get('/jolly-user', function (Request $request) {
 	return $request->session()->get('user', null);
 });
+// Route::get('/jolly-user', [AuthenticatedSessionController::class, 'updateUser']);
 
 Route::post('/add-funds', [PaymentController::class, 'store']);
 
