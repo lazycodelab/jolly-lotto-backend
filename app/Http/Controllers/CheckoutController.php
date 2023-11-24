@@ -106,6 +106,7 @@ class CheckoutController extends Controller
             if (isset($data)) {
                 if (!isset($data['suceess'])) {
                     if ($data['succeeded'] !== false) {
+                        $this->updateUserData('removeFunds');
                         return response()->json(['status' => 'success', 'message' => 'Your order has been successfully placed, and here is your order number - '.$data['orderNumber']], 200);
                     } else {
                         return response()->json(['status' => 'error', 'message' => $data['message']] , 200);
@@ -117,5 +118,26 @@ class CheckoutController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'Something went wrong, Please Try again later!'] , 200);
             }
         }
+	}
+
+    public function updateUserData($updateType) {
+		$userID = session()->get('user.userId');
+		$currentSessionDetails = session()->get('user', null);
+		$response = Http::lotto()->get("/JL/accounts/$userID/details");
+		if ($response->status() === 401 || $response->status() === 403) {
+			$this->getAuthToken();
+		} else if($response->status() === 404) {
+			return response()->json(['status' => 'error', 'message' => 'No response from server. - ' . $response->status()] , 200);
+		} else if($response->status() === 200) {
+			$updateData = $response->json();
+			if($updateType === 'removeFunds') {
+				$currentSessionDetails['wallet']['available'] = $updateData['wallet']['available'];
+				$currentSessionDetails['wallet']['withDrawal'] = $updateData['wallet']['withDrawal'];
+				session(['user' => $currentSessionDetails]);
+			}
+			return $currentSessionDetails;
+		} else {
+			return response()->json(['status' => 'error', 'message' => 'Something went wrong, Please try again later!'] , 200);
+		}
 	}
 }

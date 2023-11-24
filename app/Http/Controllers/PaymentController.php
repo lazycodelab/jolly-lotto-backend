@@ -36,6 +36,27 @@ class PaymentController extends Controller
 		}
 	}
 
+	public function updateUserData($updateType) {
+		$userID = session()->get('user.userId');
+		$currentSessionDetails = session()->get('user', null);
+		$response = Http::lotto()->get("/JL/accounts/$userID/details");
+		if ($response->status() === 401 || $response->status() === 403) {
+			$this->getAuthToken();
+		} else if($response->status() === 404) {
+			return response()->json(['status' => 'error', 'message' => 'No response from server. - ' . $response->status()] , 200);
+		} else if($response->status() === 200) {
+			$updateData = $response->json();
+			if($updateType === 'addFunds') {
+				$currentSessionDetails['wallet']['available'] = $updateData['wallet']['available'];
+				$currentSessionDetails['wallet']['withDrawal'] = $updateData['wallet']['withDrawal'];
+				session(['user' => $currentSessionDetails]);
+			}
+			return $currentSessionDetails;
+		} else {
+			return response()->json(['status' => 'error', 'message' => 'Something went wrong, Please try again later!'] , 200);
+		}
+	}
+
 	public function store(Request $request)
 	{
 		$userID = session()->get('user.profile.id');
@@ -67,6 +88,7 @@ class PaymentController extends Controller
 						'amount' => trans($data['message']),
 					]);
 				} else {
+					$this->updateUserData('addFunds');
 					return response()->json(['status' => 'success', 'message' => $data['message']] , 200);
 				}
 			} else {

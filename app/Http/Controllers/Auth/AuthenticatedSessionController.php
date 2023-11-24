@@ -44,8 +44,7 @@ class AuthenticatedSessionController extends Controller
 		return response()->noContent();
 	}
 
-	public function update(Request $request)
-	{
+	public function update(Request $request) {
 		$response = Http::lotto()->post('/JL/accounts/update', [
 			'id'             => $request->id,
 			'firstName'      => $request->firstName,
