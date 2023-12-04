@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SavedDetailsController extends Controller
@@ -24,6 +25,7 @@ class SavedDetailsController extends Controller
             'lotteryLines' => $request->lotteryLines
         ];
         $products[$productData['productID']] = $productData;
+        $products[$productData['productID']]['time'] = time();
         $request->session()->put('products', $products);
 
         return response()->json(['status' => 'success', 'message' => 'Product data saved successfully']);
