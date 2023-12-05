@@ -112,11 +112,11 @@ class ProductController extends Controller
 		foreach (Product::all() as $product) {
 			$details = $this->update($product);
 
-			if (! empty($details['prices'])) {
+			if (!empty($details['prices'])) {
 				$priceController->bulkStore($product->id, $details['prices']);
 			}
 
-			if (! empty($details['lottery'])) {
+			if (!empty($details['lottery'])) {
 				$lotteryController->bulkStore($product->id, $details['lottery']);
 			}
 		}
