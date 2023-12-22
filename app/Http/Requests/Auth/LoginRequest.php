@@ -64,12 +64,14 @@ class LoginRequest extends FormRequest
 		return $token;
 	}
 
-	public function login($email, $password)
+	public function login($email, $password, $isFirstTimeLogin = false)
 	{
-		$response = Http::lotto()->post('/auth/signin', [
+		$loginPayload = array(
 			'email'    => $email,
-			'password' => $password
-		]);
+			'password' => $password,
+		);
+		if ($isFirstTimeLogin) $loginPayload['IsFirstTimeLogin'] = true;
+		$response = Http::lotto()->post('/auth/signin', $loginPayload);
 
 		// @todo Move this logic to a separate file.
 		if ($response->status() === 401 || $response->status() === 403) {

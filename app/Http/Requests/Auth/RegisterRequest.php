@@ -77,7 +77,7 @@ class RegisterRequest extends FormRequest
 				}
 	
 				$login = new LoginRequest();
-				$login->login($this->email, $this->password);
+				$login->login($this->email, $this->password, true);
 			} else {
 				throw ValidationException::withMessages([
 					'email' => trans('No response from server. - ' . $response->status()),
