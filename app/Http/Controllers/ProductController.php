@@ -24,6 +24,37 @@ class ProductController extends Controller
 		$this->bulkStore($prods->json());
 	}
 
+	public function fetchPrizes()
+	{
+		// Fetch all products.
+		$prods = Http::lotto()->get('/allproducts/JL');
+		$productIDs = array();
+		foreach ($prods->json() as $product) {
+			array_push($productIDs, $product['lotteryId']);	
+		}
+		$currentDate = Carbon::now();
+		$oneMonthAgo = $currentDate->subDays(50);
+		$date = $oneMonthAgo->format('Y-m-d');
+
+		// fetch prizes of products
+		$response = Http::lotto()->post('/lotteries/JL', [
+			'startTime' => $date,
+			'lotteryIds' => $productIDs,
+		]);
+		$prizes = $response->json();
+
+		$newProdsArray = json_decode($prods->body(), true);
+
+		foreach ($newProdsArray as $key => $product) {
+			foreach ($prizes as $prize) {
+				if ($product['lotteryId'] == $prize['lotteryId']) {
+					$newProdsArray[$key]['price'] = number_format(floatval($prize['jackpot']) / 1000000, 2, '.', '');
+				}
+			}
+		}
+		$this->bulkStore($newProdsArray);
+	}
+
 	public function fetchDetails(Product $product)
 	{
 		$priceController     = new PriceController;
