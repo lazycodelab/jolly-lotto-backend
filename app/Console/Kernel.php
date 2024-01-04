@@ -17,6 +17,9 @@ class Kernel extends ConsoleKernel
 	protected function schedule(Schedule $schedule)
 	{
 		$schedule->call(function () {
+			(new ProductController)->fetchPrizes();
+		})->everyFiveMinutes();
+		$schedule->call(function () {
 			(new ProductController)->binChilling();
 		})->hourly();
 		$schedule->call(function () {
