@@ -52,6 +52,7 @@ class RegisterRequest extends FormRequest
 			'email'           => $this->email,
 			'password'        => $this->password,
 			'confirmPassword' => $this->password_confirmation,
+			'currencyCode'	  => $this->currencyCode,
 			'minimumLegalAge' => 18,
 			'birthDate'       => $this->birthDate,
 			'billingAddress'  => $this->billingAddress,
@@ -69,13 +70,13 @@ class RegisterRequest extends FormRequest
 		} else {
 			if ($response->status() === 200) {
 				$user = $response->json();
-	
+
 				if ($user['succeeded'] === false) {
 					throw ValidationException::withMessages([
 						'email' => trans($user['message']),
 					]);
 				}
-	
+
 				$login = new LoginRequest();
 				$login->login($this->email, $this->password, true);
 			} else {
@@ -83,7 +84,7 @@ class RegisterRequest extends FormRequest
 					'email' => trans('No response from server. - ' . $response->status()),
 				]);
 			}
-		}		
+		}
 	}
 
 	private function getAuthToken()
@@ -95,7 +96,7 @@ class RegisterRequest extends FormRequest
 			]
 		);
 		$token = $tokenResponse->body();
-		Cache::put('api_token', $token, now()->addMinutes(60));		
+		Cache::put('api_token', $token, now()->addMinutes(60));
 		return $token;
 	}
 }
