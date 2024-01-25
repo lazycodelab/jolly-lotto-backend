@@ -27,10 +27,11 @@ class ProductController extends Controller
 	public function fetchPrizes()
 	{
 		// Fetch all products.
-		$prods = Http::lotto()->get('/allproducts/JL');
-		$productIDs = array();
-		foreach ($prods->json() as $product) {
-			array_push($productIDs, $product['lotteryId']);	
+		$products = Product::all();
+		$lotteryIDs = [];
+
+		foreach ($products as $product) {
+			array_push($lotteryIDs, $product['lotteryId']);
 		}
 		$currentDate = Carbon::now();
 		$oneMonthAgo = $currentDate->subDays(50);
@@ -39,20 +40,16 @@ class ProductController extends Controller
 		// fetch prizes of products
 		$response = Http::lotto()->post('/lotteries/JL', [
 			'startTime' => $date,
-			'lotteryIds' => $productIDs,
+			'lotteryIds' => $lotteryIDs,
 		]);
 		$prizes = $response->json();
 
-		$newProdsArray = json_decode($prods->body(), true);
 
-		foreach ($newProdsArray as $key => $product) {
-			foreach ($prizes as $prize) {
-				if ($product['lotteryId'] == $prize['lotteryId']) {
-					$newProdsArray[$key]['price'] = number_format(floatval($prize['jackpot']) / 1000000, 2, '.', '');
-				}
-			}
+		foreach ($prizes as $prize) {
+			$product = Product::where('lotteryId', $prize['lotteryId'])->firstOrFail();
+			$product->price = number_format(floatval($prize['jackpot']) / 1000000, 2, '.', '');
+			$product->save();
 		}
-		$this->bulkStore($newProdsArray);
 	}
 
 	public function fetchDetails(Product $product)
@@ -234,7 +231,7 @@ class ProductController extends Controller
 			]
 		);
 		$token = $tokenResponse->body();
-		Cache::put('api_token', $token, now()->addMinutes(60));		
+		Cache::put('api_token', $token, now()->addMinutes(60));
 		return $token;
 	}
 
@@ -270,7 +267,7 @@ class ProductController extends Controller
 				$dayOfWeek = $drawDay['dayOfWeek'];
 				$today = Carbon::now();
 				$currentDayOfWeek = $today->dayOfWeek;
-		
+
 				// Calculate the date of the next draw day in the current week
 				// $date = $today->addDays($dayOfWeek - $currentDayOfWeek)->toDateString();
 				// $date = "2023-01-01";
