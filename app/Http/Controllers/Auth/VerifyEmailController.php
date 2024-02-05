@@ -38,10 +38,10 @@ class VerifyEmailController extends Controller
 	{
 		$hash = explode('?p=', $request->fullUrl());
 		$response = Http::lotto()->get("/auth/confirmemailaddress/" . $hash[1]);
-		// if ($response->status() === 200) {
-		// 	$this->updateUserData('verifyEmail');
-		// 	return $this->redirectAfterVerification();
-		// }
+		if ($response->status() === 200) {
+			var_dump($this->updateUserData('verifyEmail'));
+			// return $this->redirectAfterVerification();
+		}
 	}
 
 	public function redirectAfterVerification()
