@@ -39,9 +39,9 @@ class VerifyEmailController extends Controller
 		$hash = explode('?p=', $request->fullUrl());
 		$response = Http::lotto()->get("/auth/confirmemailaddress/" . $hash[1]);
 		if ($response->status() === 200) {
-			$data = $this->updateUserData('verifyEmail');
-			var_dump($data);
-			// return $this->redirectAfterVerification();
+			$this->updateUserData('verifyEmail');
+			// var_dump($data);
+			return $this->redirectAfterVerification();
 		}
 	}
 
@@ -82,9 +82,9 @@ class VerifyEmailController extends Controller
 	{
 		$userID = session()->get('user.userId');
 		$currentSessionDetails = session()->get('user', null);
-		echo $userID;
+		// echo $userID;
 		$response = Http::lotto()->get("/JL/accounts/$userID/details");
-		echo $response->status();
+		// echo $response->status();
 		if ($response->status() === 401 || $response->status() === 403) {
 			$this->getAuthToken();
 			return true;
