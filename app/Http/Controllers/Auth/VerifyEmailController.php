@@ -83,6 +83,7 @@ class VerifyEmailController extends Controller
 		$userID = session()->get('user.userId');
 		$currentSessionDetails = session()->get('user', null);
 		$response = Http::lotto()->get("/JL/accounts/$userID/details");
+		echo $response->status();
 		if ($response->status() === 401 || $response->status() === 403) {
 			$this->getAuthToken();
 			return true;
